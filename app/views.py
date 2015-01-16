@@ -9,5 +9,8 @@ def index(request):
 	context = RequestContext(request, {"user": request.user, "request": request, "social": social})
 	return render_to_response("app/index.html", context_instance=context)
 
-def logout_view(request):
+def login(request):
+	return render(request, "app/index.html")
+
+def logout(request):
 	return render(request, "app/index.html")
