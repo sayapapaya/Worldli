@@ -1,0 +1,47 @@
+{% extends "app/base.html" %}
+
+{% block script %}
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '926754177344550',
+      xfbml      : true,
+      version    : 'v2.2'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+{% endblock %}
+
+
+{% block content %}
+
+
+<div>
+
+ <p>
+   <ul>
+   {% if user and not user.is_anonymous %}
+     <li>
+       <a>Hello {{ user.get_full_name|default:user.username }}!</a>
+     </li>
+     <li>
+       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+       <img src="http://graph.facebook.com/{{ social.uid }}/picture"	
+     </li>
+   {% else %}
+     <li>
+       <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a>
+     </li>
+   {% endif %}
+   </ul>
+ </p>
+ </div>
+{% endblock%}
