@@ -28,7 +28,7 @@
 	    <li class="dropdown">
 	      <img class="img-circle dropdown-toggle" id="nav-image" data-toggle="dropdown" role="button" aria-expanded="false" src="http://graph.facebook.com/{{ social.uid }}/picture">
 	      <ul class="dropdown-menu" role="menu">
-	        <li><a href="#">Action</a></li>
+	        <li><a href="{% url 'profile' %}">My Profile</a></li>
 	        <li><a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a></li>
 	      </ul>
 	    </li>
@@ -38,7 +38,6 @@
 
 
 {% block content %}
-
 {% if not user or user.is_anonymous %}
 	<div class="social-wrap">
 		<button id="facebook-button"><a id="facebook-button-link" href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a></button>
