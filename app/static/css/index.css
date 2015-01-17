@@ -40,5 +40,15 @@ div.social-wrap button:active {
 	cursor: pointer;
 }
 #profile-image{
-	
+	margin:10px;
+	float:left;
+}
+#profile-form-container{
+	position:relative;
+	width:400px;
+	float:left;
+	padding:20px;
+}
+.hidden{
+    display:none;
 }

@@ -26,7 +26,7 @@
 	<ul class="nav navbar-nav navbar-right">
 		<li><a href="#">Hello {{ user.get_short_name }}</a></li>
 	    <li class="dropdown">
-	      <img class="img-circle dropdown-toggle" id="nav-image" data-toggle="dropdown" role="button" aria-expanded="false" src="http://graph.facebook.com/{{ social.uid }}/picture">
+	      <a class="dropdown-toggle" style="padding:0px;" data-toggle="dropdown" role="button" aria-expanded="false" ><img class="img-circle" id="nav-image" src="http://graph.facebook.com/{{ social.uid }}/picture"><span class="caret"></span></a>
 	      <ul class="dropdown-menu" role="menu">
 	        <li><a href="{% url 'profile' %}">My Profile</a></li>
 	        <li><a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a></li>
