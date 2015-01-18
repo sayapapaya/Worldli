@@ -20,3 +20,19 @@ a.close {
     top: -10px;
     right: -5px;
 }
+#carousel-problem{
+	margin: 0px 20% auto 20%;
+	padding: 0px;
+}
+.carousel-img{
+	max-width:100%;
+}
+.wrapper{
+	position:absolute;
+	height:100%;
+	width:100%;
+}
+#problem-content{
+	margin: 20px 15% auto 15%;
+}
+

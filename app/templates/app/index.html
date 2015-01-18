@@ -41,19 +41,9 @@
 	</div>
 {% endif %}
 
-<section id="share-container">
-	<a href="https://twitter.com/intent/tweet?url=http%3A%2F%2Fwww.cssflow.com%2Fsnippets%2Fshare-buttons&amp;via=CSSFlow&amp;text=CSS3%20snippet%3A%20share%20buttons" class="share-btn" target="_blank">
-	  <span class="share-btn-action share-btn-tweet">Tweet</span>
-	  <span class="share-btn-count">481</span>
-	</a>
-	<a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.cssflow.com%2Fsnippets%2Fshare-buttons" class="share-btn" target="_blank">
-	  <span class="share-btn-action share-btn-like">Like</span>
-	  <span class="share-btn-count">516</span>
-	</a>
-	<a href="https://plus.google.com/share?url=http%3A%2F%2Fwww.cssflow.com%2Fsnippets%2Fshare-buttons" class="share-btn" target="_blank">
-	  <span class="share-btn-action share-btn-plus">+1</span>
-	  <span class="share-btn-count">234</span>
-	</a>
-</section>
-
+<ul>
+{% for problem in problems %}
+	<li><a href="{% url 'view_post' problem.id %}">{{ problem.title }}</a></li>
+{% endfor %}
+</ul>
 {% endblock%}

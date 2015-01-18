@@ -4,13 +4,15 @@ from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponse
 from .forms import UploadImageForm
 from app.models import *
+import requests
 
 
 def index(request):
 	social = None
 	if request.user and hasattr(request.user, "social_auth"):
 		social = request.user.social_auth.get(provider="facebook")
-	context = RequestContext(request, {"user": request.user, "request": request, "social": social})
+	problems = Problem.objects.all()
+	context = RequestContext(request, {"user": request.user, "request": request, "social": social, "problems": problems})
 	return render_to_response("app/index.html", context_instance=context)
 
 def profile(request):
@@ -50,6 +52,15 @@ def create_post(request):
 		social = request.user.social_auth.get(provider="facebook")
 	context = RequestContext(request, {"social":social})
 	return render_to_response("app/create_post.html", context_instance=context)
+
+def view_post(request, problem_id):
+	social = None
+	if request.user and hasattr(request.user, "social_auth"):
+		social = request.user.social_auth.get(provider="facebook")
+	problem = Problem.objects.get(id=problem_id)
+	images = ProblemImage.objects.filter(problem=problem)
+	context = RequestContext(request, {"social":social, "problem": problem, "images":images})
+	return render_to_response("app/view_post.html", context_instance=context)
 
 def create_problem(request):
 	social = None
@@ -112,3 +123,7 @@ def delete_image(request, image_id):
 	images = ProblemImage.objects.filter(problem=problem)
 	context = RequestContext(request, {"social":social, "problem": problem, "images": images})
 	return render_to_response("app/upload_images.html", context_instance=context)
+
+#def place_autocomplete(request):
+#	API_KEY = "AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg"
+
