@@ -1,0 +1,40 @@
+{% extends "app/base.html" %}
+
+{% block header_file %}
+<script src="{{ STATIC_URL }}javascript/getGeolocation.js"></script>
+{% endblock %}
+
+
+{% block nav %}
+<ul class="nav navbar-nav navbar-left">
+	<li class="active"><a href="{% url 'create_post' %}">Post a Problem</a></li>
+</ul>
+{% endblock %}
+
+
+{% block content %}
+<center><h2>Post a Problem</h2></center>
+</br>
+<div id="create-post-container">
+{% if error_msg %}
+<div class="alert alert-danger" role="alert">{{ error_msg }}</div>
+{% endif %}
+<form id="problem-form" action="{% url 'create_problem' %}" method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label>Describe the problem in a couple words</label>
+    <input name="title" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label>Explain in more detail</label>
+    <textarea name="description" class="form-control" rows="5"></textarea>
+  </div>
+  <div class="form-group">
+    <label>Where is the problem found?</label>
+    <input name="location" id="location" class="form-control" type="text">
+  </div>
+  <center><button type="submit" id="next-button" class="btn btn-default">Next</button></center>
+</form>
+
+</div>
+{% endblock %}

@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, include, url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls.static import static
 from django.contrib import admin
 from app import views
+import settings
 
 
 urlpatterns = patterns('',
@@ -8,9 +11,16 @@ urlpatterns = patterns('',
     # url(r'^$', 'worldli.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^$', views.index, name="index"),
+    url(r'^admin/', include(admin.site.urls)),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     url(r'^profile/', views.profile, name="profile"),
     url(r'^create_user/', views.create_user, name="create_user"),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^create_post/', views.create_post, name="create_post"),
+    url(r'^create_problem/', views.create_problem, name="create_problem"),
+    url(r'^upload_images/(?P<problem_id>\d+)/$', views.upload_images, name="upload_images"),
+    url(r'^delete_image/(?P<image_id>\d+)$', views.delete_image, name="delete_image"),
 )
+
+urlpatterns += patterns('',
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}))

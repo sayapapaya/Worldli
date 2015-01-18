@@ -103,8 +103,22 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = '/Users/yi-shiuantung/Desktop/worldli/media/'
+
+MEDIA_URL = '/media/'
+
+PROJECT_ROOT = os.path.abspath("/Users/yi-shiuantung/Desktop/worldli/")
+
+STATICFILES_DIRS = (
+  os.path.join(PROJECT_ROOT, 'static'),
+  os.path.join(PROJECT_ROOT, 'media'),
+)
+
 SOCIAL_AUTH_FACEBOOK_KEY = "926754177344550"
 SOCIAL_AUTH_FACEBOOK_SECRET = "282814a03003d94f7a4e75281107beb7"
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_friends']
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "1032620745446"
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "Wd9G6XCoCd_foF2qWdvGsiDV"
 
