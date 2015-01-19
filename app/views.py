@@ -53,6 +53,15 @@ def create_post(request):
 	context = RequestContext(request, {"social":social})
 	return render_to_response("app/create_post.html", context_instance=context)
 
+def my_post(request):
+	social = None
+	if request.user and hasattr(request.user, "social_auth"):
+		social = request.user.social_auth.get(provider="facebook")
+	problem = Problem.objects.get(user=request.user)
+	context = RequestContext(request, {"social":social, "problem": problem})
+	return render_to_response("app/my_post.html", context_instance=context)
+
+
 def view_post(request, problem_id):
 	social = None
 	if request.user and hasattr(request.user, "social_auth"):
@@ -71,9 +80,11 @@ def create_problem(request):
 		title = request.POST.get('title')
 		description = request.POST.get('description')
 		location = request.POST.get('location')
+		latitude = request.POST.get('latitude')
+		longitude = request.POST.get('longitude')
 		problem = Problem.objects.filter(user=request.user, title=title)
 		if len(problem) == 0:
-			problem = Problem(user=request.user, title=title, description=description, location=location)
+			problem = Problem(user=request.user, title=title, description=description, location=location, latitude=latitude, longitude=longitude)
 			try:
 				problem.save()
 			except Exception, e:
@@ -83,6 +94,8 @@ def create_problem(request):
 			problem[0].title = title
 			problem[0].description = description
 			problem[0].location = location
+			problem[0].latitude = latitude
+			problem[0].longitude = longitude
 			try:
 				problem[0].save()
 				problem = problem[0]
@@ -124,6 +137,11 @@ def delete_image(request, image_id):
 	context = RequestContext(request, {"social":social, "problem": problem, "images": images})
 	return render_to_response("app/upload_images.html", context_instance=context)
 
-#def place_autocomplete(request):
-#	API_KEY = "AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg"
+def place_autocomplete(request):
+	if request.method == "POST":
+		API_KEY = "AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg"
+		text = request.POST.get("search")
+		url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?types=(regions)&input=%s&key=%s" % (text, API_KEY)
+		r = requests.get(url)
+		return HttpResponse(r.text)
 

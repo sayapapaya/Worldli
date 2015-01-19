@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^upload_images/(?P<problem_id>\d+)/$', views.upload_images, name="upload_images"),
     url(r'^delete_image/(?P<image_id>\d+)$', views.delete_image, name="delete_image"),
     url(r'^post/(?P<problem_id>\d+)$', views.view_post, name="view_post"),
+    url(r'^place_autocomplete/', views.place_autocomplete, name="place_autocomplete"),
 )
 
 urlpatterns += patterns('',

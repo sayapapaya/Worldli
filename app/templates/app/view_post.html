@@ -1,5 +1,37 @@
 {% extends "app/base.html" %}
 
+{% block header_file %}
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg"></script>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function() {
+
+$('#image-radio')[0].onchange = function() {
+	$('#carousel-problem')[0].style.display="block";
+	$('#map-canvas')[0].innerHTML = "";
+	$('#map-canvas')[0].style.display = "none";
+};
+
+$('#map-radio')[0].onchange =  function() {
+	$('#carousel-problem')[0].style.display="none";
+	$('#map-canvas')[0].style.display = "block";
+	initialize();
+}
+
+function initialize() {
+	var mapOptions = {
+	  center: { lat: {{ problem.latitude }}, lng: {{ problem.longitude }} },
+	  zoom: 8
+	};
+	var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+}
+
+});
+</script>
+{% endblock %}
+
 
 {% block content %}
 
@@ -44,11 +76,23 @@
 </div>
 {% endif %}
 
+<div id="map-canvas" style="display:none"></div>
+
+<div class="switch">
+  <input type="radio" class="switch-input" name="view" value="week" id="image-radio" checked>
+  <label for="image-radio" class="switch-label switch-label-off">Image</label>
+  <input type="radio" class="switch-input" name="view" value="month" id="map-radio">
+  <label for="map-radio" class="switch-label switch-label-on">Map</label>
+  <span class="switch-selection"></span>
+</div>
+
 <center><h2>{{ problem.title }}</h2></center>
 
 <div id="problem-content">
 <p>{{ problem.description }}</p>
 </div>
+
+{{ problem.latitude }} {{ problem.longitude }}
 
 </div>
 {% endblock %}
