@@ -23,7 +23,9 @@
 
 {% block nav %}
 <ul class="nav navbar-nav navbar-left">
-	<li><a href="{% url 'create_post' %}">Post a Problem</a></li>
+	<li><a href="{% url 'create_post' %}">Post a Problem</a>
+    <a href="{%url 'home'%}">HOME</a>
+  </li>
 </ul>
 {% endblock %}
 
