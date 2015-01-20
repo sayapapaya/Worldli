@@ -7,6 +7,14 @@ from app.models import *
 import requests
 
 
+def home(request):
+	social = None
+	if request.user and hasattr(request.user, "social_auth"):
+		social = request.user.social_auth.get(provider="facebook")
+	problems = Problem.objects.all()
+	context = RequestContext(request, {"user": request.user, "request": request, "social": social, "problems": problems})
+	return render_to_response("app/home.html", context_instance=context)
+
 def index(request):
 	social = None
 	if request.user and hasattr(request.user, "social_auth"):
