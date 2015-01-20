@@ -14,7 +14,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
-    url(r'^home/',views.home, name="home"),
     url(r'^profile/', views.profile, name="profile"),
     url(r'^create_user/', views.create_user, name="create_user"),
     url(r'^create_post/', views.create_post, name="create_post"),
@@ -23,7 +22,16 @@ urlpatterns = patterns('',
     url(r'^delete_image/(?P<image_id>\d+)$', views.delete_image, name="delete_image"),
     url(r'^post/(?P<problem_id>\d+)$', views.view_post, name="view_post"),
     url(r'^place_autocomplete/', views.place_autocomplete, name="place_autocomplete"),
+    url(r'^my_post/', views.my_post, name="my_post"),
+    url(r'^edit_post/(?P<problem_id>\d+)$', views.edit_post, name="edit_post"),
+    url(r'^edit_problem/(?P<problem_id>\d+)$', views.edit_problem, name="edit_problem"),
 )
 
 urlpatterns += patterns('',
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}))
+
+urlpatterns += patterns('',
+        url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.STATIC_ROOT,
+        }),
+)

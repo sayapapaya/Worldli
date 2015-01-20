@@ -97,22 +97,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-
-STATIC_URL = '/static/'
-
-MEDIA_ROOT = '/Users/yi-shiuantung/Desktop/worldli/media/'
-
-MEDIA_URL = '/media/'
-
-PROJECT_ROOT = os.path.abspath("/Users/yi-shiuantung/Desktop/worldli/")
-
-STATICFILES_DIRS = (
-  os.path.join(PROJECT_ROOT, 'static'),
-  os.path.join(PROJECT_ROOT, 'media'),
-)
 
 SOCIAL_AUTH_FACEBOOK_KEY = "926754177344550"
 SOCIAL_AUTH_FACEBOOK_SECRET = "282814a03003d94f7a4e75281107beb7"
@@ -123,18 +109,39 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_friends']
 import dj_database_url
 DATABASES['default'] =  dj_database_url.config()
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "yi-shiuantung",
+        "USER": "",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
+
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-# Static asset configuration
-import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = 'staticfiles'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.7/howto/static-files/
+
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static/')
+
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
+
+MEDIA_URL = '/media/'
+
+#STATICFILES_DIRS = (
+#  os.path.join(PROJECT_ROOT, 'static'),
+#  os.path.join(PROJECT_ROOT, 'media'),
+#)
 

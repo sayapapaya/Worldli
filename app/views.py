@@ -6,7 +6,6 @@ from .forms import UploadImageForm
 from app.models import *
 import requests
 
-
 def home(request):
 	social = None
 	if request.user and hasattr(request.user, "social_auth"):
@@ -61,12 +60,27 @@ def create_post(request):
 	context = RequestContext(request, {"social":social})
 	return render_to_response("app/create_post.html", context_instance=context)
 
+def edit_post(request, problem_id):
+	social = None
+	if request.user and hasattr(request.user, "social_auth"):
+		social = request.user.social_auth.get(provider="facebook")
+	problem = Problem.objects.get(id=problem_id)
+	if problem.user != request.user:
+		context = RequestContext(request, {"social":social})
+		return render_to_response("app/index.html", context_instance=context)
+	context = RequestContext(request, {"social":social, "problem":problem})
+	return render_to_response("app/edit_post.html", context_instance=context)
+
 def my_post(request):
 	social = None
 	if request.user and hasattr(request.user, "social_auth"):
 		social = request.user.social_auth.get(provider="facebook")
-	problem = Problem.objects.get(user=request.user)
-	context = RequestContext(request, {"social":social, "problem": problem})
+	problems = Problem.objects.filter(user=request.user)
+	image_dict = {}
+	for problem in problems:
+		images = ProblemImage.objects.filter(problem=problem)
+		image_dict[problem] = images
+	context = RequestContext(request, {"social":social, "problems": problems, "image_dict":image_dict})
 	return render_to_response("app/my_post.html", context_instance=context)
 
 
@@ -117,6 +131,26 @@ def create_problem(request):
 	context = RequestContext(request, {"social":social, "problem":problem, "images": images})
 	return render_to_response("app/upload_images.html", context_instance=context)
 
+def edit_problem(request, problem_id):
+	if request.method == "POST":
+		problem = Problem.objects.get(id=problem_id)
+		problem.title = request.POST.get('title')
+		problem.description = request.POST.get('description')
+		problem.location = request.POST.get('location')
+		problem.latitude = request.POST.get('latitude')
+		problem.longitude = request.POST.get('longitude')
+		problem.save()
+	if problem.user != request.user:
+		context = RequestContext(request, {"social":social})
+		return render_to_response("app/index.html", context_instance=context)
+	social = None
+	if request.user and hasattr(request.user, "social_auth"):
+		social = request.user.social_auth.get(provider="facebook")
+	images = ProblemImage.objects.filter(problem=problem)
+	context = RequestContext(request, {"social":social, "problem":problem, "images": images})
+	return render_to_response("app/upload_images.html", context_instance=context)
+
+>>>>>>> 09edefbb9f854f188c7af24156ffaebd5e4e4ad4
 def upload_images(request, problem_id):
 	if request.method == "POST":
 		form = UploadImageForm(request.POST, request.FILES)

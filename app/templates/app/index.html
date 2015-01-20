@@ -22,9 +22,13 @@
 
 
 {% block nav %}
+
+{% if user and not user.is_anonymous %}
 <ul class="nav navbar-nav navbar-left">
 	<li><a href="{% url 'create_post' %}">Post a Problem</a></li>
 </ul>
+{% endif %}
+
 {% endblock %}
 
 

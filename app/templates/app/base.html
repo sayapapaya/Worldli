@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
+<<<<<<< HEAD
 <head>
+=======
+
+<head>
+{% load staticfiles %}
+>>>>>>> 09edefbb9f854f188c7af24156ffaebd5e4e4ad4
 <title>Worldli</title>
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
@@ -43,6 +49,7 @@
             <a class="dropdown-toggle" style="padding:0px;" data-toggle="dropdown" role="button" aria-expanded="false" ><img class="img-circle" id="nav-image" src="http://graph.facebook.com/{{ social.uid }}/picture"><span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <li><a href="{% url 'profile' %}">My Profile</a></li>
+              <li><a href="{% url 'my_post' %}">My Posts</a></li>
               <li><a href="{% url 'auth:logout' %}?next={% url 'index' %}">Logout</a></li>
             </ul>
           </li>
@@ -77,6 +84,10 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 </script>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 09edefbb9f854f188c7af24156ffaebd5e4e4ad4
 {% block script %}
 {% endblock %}
 
