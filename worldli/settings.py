@@ -115,7 +115,7 @@ DATABASES = {
         "NAME": "yi-shiuantung",
         "USER": "",
         "PASSWORD": "",
-        "HOST": "",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }
