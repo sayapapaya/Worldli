@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+{% load staticfiles %}
 <title>Worldli</title>
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
@@ -78,6 +80,7 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 </script>
+
 {% block script %}
 {% endblock %}
 

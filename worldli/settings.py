@@ -112,7 +112,7 @@ DATABASES['default'] =  dj_database_url.config()
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "yi-shiuantung",
+        "NAME": "",
         "USER": "",
         "PASSWORD": "",
         "HOST": "localhost",
@@ -139,9 +139,9 @@ MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
 
 MEDIA_URL = '/media/'
 
-STATICFILES_DIRS = (
-  os.path.join(PROJECT_ROOT, 'static'),
-  os.path.join(PROJECT_ROOT, 'media'),
-)
+#STATICFILES_DIRS = (
+#  os.path.join(PROJECT_ROOT, 'static'),
+#  os.path.join(PROJECT_ROOT, 'media'),
+#)
 
 
