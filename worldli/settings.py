@@ -97,6 +97,34 @@ USE_L10N = True
 
 USE_TZ = True
 
+SOCIAL_AUTH_FACEBOOK_KEY = "926754177344550"
+SOCIAL_AUTH_FACEBOOK_SECRET = "282814a03003d94f7a4e75281107beb7"
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_friends']
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "1032620745446"
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "Wd9G6XCoCd_foF2qWdvGsiDV"
+
+# Parse database configuration from $DATABASE_URL
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "yi-shiuantung",
+        "USER": "",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "",
+    }
+}
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Allow all host headers
+ALLOWED_HOSTS = ['*']
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
@@ -115,24 +143,5 @@ STATICFILES_DIRS = (
   os.path.join(PROJECT_ROOT, 'static'),
   os.path.join(PROJECT_ROOT, 'media'),
 )
-
-SOCIAL_AUTH_FACEBOOK_KEY = "926754177344550"
-SOCIAL_AUTH_FACEBOOK_SECRET = "282814a03003d94f7a4e75281107beb7"
-
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_friends']
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "1032620745446"
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "Wd9G6XCoCd_foF2qWdvGsiDV"
-
-# Parse database configuration from $DATABASE_URL
-import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
-
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Allow all host headers
-ALLOWED_HOSTS = ['*']
-
 
 
