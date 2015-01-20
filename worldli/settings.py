@@ -119,6 +119,22 @@ SOCIAL_AUTH_FACEBOOK_SECRET = "282814a03003d94f7a4e75281107beb7"
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_friends']
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "1032620745446"
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "Wd9G6XCoCd_foF2qWdvGsiDV"
+# Parse database configuration from $DATABASE_URL
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Allow all host headers
+ALLOWED_HOSTS = ['*']
+
+# Static asset configuration
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = 'staticfiles'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 

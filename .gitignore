@@ -1,5 +1,5 @@
 db.sqlite3
-*.pyc
 .DS_STORE
 *.jpg
+*.pyc
 env/*
