@@ -150,7 +150,6 @@ def edit_problem(request, problem_id):
 	context = RequestContext(request, {"social":social, "problem":problem, "images": images})
 	return render_to_response("app/upload_images.html", context_instance=context)
 
->>>>>>> 09edefbb9f854f188c7af24156ffaebd5e4e4ad4
 def upload_images(request, problem_id):
 	if request.method == "POST":
 		form = UploadImageForm(request.POST, request.FILES)
