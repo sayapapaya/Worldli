@@ -1,0 +1,151 @@
+{% extends "app/base.html" %}
+
+{% block header_file %}
+<script src="{{ STATIC_URL }}javascript/getGeolocation.js"></script>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+$(document).ready(function(){
+
+var API_KEY = "AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg";
+
+function save_location(){
+  $('#location')[0].value = $('#location-guess')[0].innerHTML;
+}
+
+$('#save-location-button')[0].addEventListener('click', save_location);
+
+function saveLatlgn(){
+  var location = $('#location')[0].value;
+  var url = "https://maps.googleapis.com/maps/api/geocode/json?address="+location+"&key="+API_KEY;
+  $.ajax({
+    url: url,
+    type: "GET",
+    dataType: "json",
+    success: function(result){
+      var lat = result["results"][0]["geometry"]["location"]["lat"];
+      var lng = result["results"][0]["geometry"]["location"]["lng"];
+      $('#latitude')[0].value = lat;
+      $('#longitude')[0].value = lng;
+      $('#problem-form')[0].submit();
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+    }
+  });
+}
+
+function getAutoComplete(){
+  var search = $('#location')[0].value;
+  var csrftoken = getCookie('csrftoken');
+  $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+  });
+  $.ajax({
+    url: "{% url 'place_autocomplete' %}",
+    type: "POST",
+    dataType: "json",
+    data: {"search":search},
+    success: function(result) {
+      var predictions = result["predictions"];
+      var tags = [];
+      for (i in predictions){
+        tags.push(predictions[i]["description"]);
+      };
+      $( "#location" ).autocomplete({
+        source: tags
+      });
+    },
+    error: function(xhr, errmsg, err) {
+        console.log(errmsg);
+    }
+  });
+}
+
+function validateForm(){
+  console.log('hello');
+  var title = $('[name="title"')[0].value;
+  var description = $('[name="description"')[0].value;
+  var location = $('[name="location"]')[0].value;
+  console.log(title);
+  console.log(description);
+  console.log(location);
+  if (title == "" || description == "" || location == "") {
+    $('#form-error')[0].innerHTML = "One or more of the fields are blank";
+    $('#form-error')[0].style.display = "block";
+  } else {
+    saveLatlgn();
+  }
+}
+
+$('#location')[0].addEventListener('keyup', getAutoComplete);
+$('#next-button')[0].addEventListener('click', validateForm);
+
+
+});
+</script>
+{% endblock %}
+
+
+{% block nav %}
+<ul class="nav navbar-nav navbar-left">
+	<li class="active"><a href="{% url 'create_post' %}">Post a Problem</a></li>
+</ul>
+{% endblock %}
+
+
+{% block content %}
+<center><h2>Post a Problem</h2></center>
+</br>
+<div id="create-post-container">
+<div class="alert alert-danger" id="form-error" style="display:none" role="alert"></div>
+{% if error_msg %}
+<div class="alert alert-danger" role="alert">{{ error_msg }}</div>
+{% endif %}
+
+<form id="problem-form" action="{% url 'create_problem' %}" method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label>Describe the problem in a couple words</label>
+    <input name="title" type="text" class="form-control">
+  </div>
+  <div class="form-group">
+    <label>Explain in more detail</label>
+    <textarea name="description" class="form-control" rows="5"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="location">Where is the problem found?</label>
+    <input name="location" id="location" class="form-control" type="text">
+  </div>
+  <input name="latitude" id="latitude" style="display:none">
+  <input name="longitude" id="longitude" style="display:none">
+</form>
+
+<center><button id="next-button" class="btn btn-default">Next</button></center>
+
+</div>
+
+<div class="modal fade" id="location-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Is this where the problem is located?</h4>
+      </div>
+      <div class="modal-body">
+        <p id="location-guess"></p>
+      </div>
+      <div class="modal-footer">
+         <button type="button" class="btn btn-primary" data-dismiss="modal" id="save-location-button">Yes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{% endblock %}

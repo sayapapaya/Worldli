@@ -1,0 +1,89 @@
+{% extends "app/base.html" %}
+
+{% block script %}
+<script>
+
+function submit_form() {
+  event.preventDefault();
+  console.log("form submitted");
+  create_user();
+}
+
+function create_user(){
+  console.log($('#first_name')[0].value);
+  var csrftoken = getCookie('csrftoken');
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+  });
+  $.ajax({
+    url: "{% url 'create_user' %}",
+    type: "POST",
+    data: {"first_name":$('#first_name')[0].value,"last_name":$('#last_name')[0].value, "email":$('#email')[0].value, "education":$('#education')[0].value, "linkedin":$('#linkedin')[0].value},
+    success: function(json) {
+      console.log("success");
+      $('.alert-success')[0].style.display = "block";
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(xhr.status + ": " + xhr.responseText);
+      $('.alert-danger')[0].style.display = "block";
+    }
+  });
+}
+</script>
+{% endblock %}
+
+{% block nav %}
+<ul class="nav navbar-nav navbar-left">
+  <li><a href="{% url 'create_post' %}">Post a Problem</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<img id="profile-image" src="http://graph.facebook.com/{{ social.uid }}/picture?type=large" class="img-thumbnail">
+<div id="profile-form-container">
+<div class="alert alert-success" style="display:none;"role="alert">Data successfully saved!</div>
+<div class="alert alert-danger" style="display:none;" role="alert">Something went wrong...</div>
+<form id="profile-form" onsubmit="javascript:submit_form()">
+    {% csrf_token %}
+    <div class="form-group">
+    	<label>First Name</label>
+    	<input id="first_name" type="text" class="form-control" value="{{ user.first_name }}">
+  	</div>
+    <div class="form-group">
+      <label>Last Name</label>
+      <input id="last_name" type="text" class="form-control" value="{{ user.last_name }}">
+    </div>
+  	<div class="form-group">
+    	<label>Your email address</label>
+    	<input id="email" type="email" class="form-control" value="{{ user.email }}">
+  	</div>
+
+    {% if person %}
+  	<div class="form-group">
+    	<label>Where have you studied?</label>
+    	<input id="education" type="text" class="form-control" placeholder="Add education" value="{{ person.0.education }}">
+  	</div>
+    <div class="form-group">
+      <label>LinkedIn URL</label>
+      <input id="linkedin" type="url" class="form-control" placeholder="LinkedIn" value="{{ person.0.linkedin }}">
+    </div>
+    {% else %}
+    <div class="form-group">
+      <label>Where have you studied?</label>
+      <input id="education" type="text" class="form-control" placeholder="Add education">
+    </div>
+    <div class="form-group">
+      <label>LinkedIn URL</label>
+      <input id="linkedin" type="url" class="form-control" placeholder="LinkedIn">
+    </div>
+    {% endif %}
+    <button type="submit" class="btn btn-default">Save</button>
+</form>
+</div>
+
+{% endblock %}

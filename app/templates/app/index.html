@@ -1,0 +1,51 @@
+{% extends "app/base.html" %}
+
+{% block script %}
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '926754177344550',
+      xfbml      : true,
+      version    : 'v2.2'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+{% endblock %}
+
+
+{% block nav %}
+{% if user and not user.is_anonymous %}
+<ul class="nav navbar-nav navbar-left">
+	<li><a href="{% url 'create_post' %}">Post a Problem</a></li>
+</ul>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+{% if not user or user.is_anonymous %}
+	<div id="social-container">
+		<div class="fb-icon-bg"></div>
+		<div class="fb-bg" onclick="location.href='{% url 'social:begin' 'facebook' %}?next={{ request.path }}'"></div>
+		<div class="twi-icon-bg"></div>
+		<div class="twi-bg" onclick="location.href='{% url 'social:begin' 'twitter' %}?next={{ request.path }}"></div>
+		<div class="g-icon-bg"></div>
+		<div class="g-bg" onclick="location.href='{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"></div>
+	</div>
+{% endif %}
+
+<ul>
+{% for problem in problems %}
+	<li><a href="{% url 'view_post' problem.id %}">{{ problem.title }}</a></li>
+{% endfor %}
+</ul>
+{% endblock%}

@@ -1,0 +1,96 @@
+{% extends "app/base.html" %}
+
+{% block header_file %}
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg"></script>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function() {
+
+$('#image-radio')[0].onchange = function() {
+	$('#carousel-problem')[0].style.display="block";
+	$('#map-canvas')[0].innerHTML = "";
+	$('#map-canvas')[0].style.display = "none";
+};
+
+$('#map-radio')[0].onchange =  function() {
+	$('#carousel-problem')[0].style.display="none";
+	$('#map-canvas')[0].style.display = "block";
+	initialize();
+}
+
+function initialize() {
+	var mapOptions = {
+	  center: { lat: {{ problem.latitude }}, lng: {{ problem.longitude }} },
+	  zoom: 8
+	};
+	var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+}
+
+});
+</script>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="wrapper">
+
+{% if images %}
+<div id="carousel-problem" class="carousel slide" data-ride="carousel" data-interval="false">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#carousel-problem" data-slide-to="0" class="active"></li>
+    {% for image in images %}
+    	{% if not forloop.last %}
+     	<li data-target="#carousel-problem" data-slide-to="{{ forloop.counter }}"></li>
+    	{% endif %}
+    {% endfor %}
+  </ol>
+
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+  	<div class="item active">
+      	<center><img class="carousel-img" src="{{ images.0.image.url }}"></center>
+    </div>
+    {% for image in images %}
+    	{% if not forloop.first %}
+    	<div class="item">
+      		<center><img class="carousel-img" src="{{ image.image.url }}"></center>
+    	</div>
+    	{% endif %}
+    {% endfor %}
+  </div>
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel-problem" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#carousel-problem" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+{% endif %}
+
+<div id="map-canvas" style="display:none"></div>
+
+<div class="switch">
+  <input type="radio" class="switch-input" name="view" value="week" id="image-radio" checked>
+  <label for="image-radio" class="switch-label switch-label-off">Image</label>
+  <input type="radio" class="switch-input" name="view" value="month" id="map-radio">
+  <label for="map-radio" class="switch-label switch-label-on">Map</label>
+  <span class="switch-selection"></span>
+</div>
+
+<center><h2>{{ problem.title }}</h2></center>
+
+<div id="problem-content">
+<p>{{ problem.description }}</p>
+</div>
+
+</div>
+{% endblock %}

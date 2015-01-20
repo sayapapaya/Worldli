@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Worldli</title>
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/index.css">
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/post.css">
+{% block header_file %}
+{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{% url 'index' %}">Worldli</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      {% block nav %}
+      {% endblock %}
+      {% if user and not user.is_anonymous %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Hello {{ user.get_short_name }}</a></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" style="padding:0px;" data-toggle="dropdown" role="button" aria-expanded="false" ><img class="img-circle" id="nav-image" src="http://graph.facebook.com/{{ social.uid }}/picture"><span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="{% url 'profile' %}">My Profile</a></li>
+              <li><a href="{% url 'my_post' %}">My Posts</a></li>
+              <li><a href="{% url 'auth:logout' %}?next={% url 'index' %}">Logout</a></li>
+            </ul>
+          </li>
+       </ul>
+      {% endif %}
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div id="fb-root"></div>
+
+<script>
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+</script>
+{% block script %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
