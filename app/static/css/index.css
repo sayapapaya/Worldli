@@ -341,4 +341,10 @@ a:hover {
 .left{
   float:left;
 }
-#earth_div{top: 20px; right: 0; bottom: 0; left: 0; position: absolute !important;}
+#earth_div{
+  top: 50px; 
+  right: 0; 
+  bottom: 0; 
+  left: 0; 
+  position: absolute !important;
+}

@@ -45,10 +45,8 @@ function initialize() {
 {% for problem, images in image_dict.items %}
 
   var marker1 = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
-  marker1.bindPopup("<h3>{{problem.title}}</h3><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100px' height='100px'><br>{{problem.description}}</span>",{maxWidth:150,closeButton:true})
+  marker1.bindPopup("<h3>{{problem.title}}</h3><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100px' height='100px'><br>{{problem.description}}<br /><button class='btn btn-default'><a href='{% url 'view_post' problem.id %}'>Read more</a></button></span>",{maxWidth:150,closeButton:true})
 {% endfor %}
-
-var marker = WE.marker([51.5, -0.09]).addTo(earth);
 /*
   marker.bindPopup("<h3>Lack of Clean Water</h3><span 'style='font-size:8px;color:#999'><img src='http://www.nofrackingway.us/wp-content/uploads/2012/09/dirty-water.jpeg' width='100px' height='100px'><br>there is rarely an clean water in India. It kinda sucks. People drink their own urine half the time.<br /><h6> by Saya Date </h6></span>", {maxWidth: 150, closeButton: true})//.openPopup();*/
 }
