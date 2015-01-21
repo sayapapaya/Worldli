@@ -53,7 +53,9 @@ var marker = WE.marker([51.5, -0.09]).addTo(earth);
   marker.bindPopup("<h3>Lack of Clean Water</h3><span 'style='font-size:8px;color:#999'><img src='http://www.nofrackingway.us/wp-content/uploads/2012/09/dirty-water.jpeg' width='100px' height='100px'><br>there is rarely an clean water in India. It kinda sucks. People drink their own urine half the time.<br /><h6> by Saya Date </h6></span>", {maxWidth: 150, closeButton: true})//.openPopup();*/
 }
 
-initialize();
+$(document).ready(function(){
+  initialize();
+});
 
 </script>
 {% endblock %}
