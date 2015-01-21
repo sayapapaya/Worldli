@@ -6,20 +6,16 @@ from .forms import UploadImageForm
 from app.models import *
 import requests
 
-def home(request):
-	social = None
-	if request.user and hasattr(request.user, "social_auth"):
-		social = request.user.social_auth.get(provider="facebook")
-	problems = Problem.objects.all()
-	context = RequestContext(request, {"user": request.user, "request": request, "social": social, "problems": problems})
-	return render_to_response("app/home.html", context_instance=context)
-
 def index(request):
 	social = None
 	if request.user and hasattr(request.user, "social_auth"):
 		social = request.user.social_auth.get(provider="facebook")
 	problems = Problem.objects.all()
-	context = RequestContext(request, {"user": request.user, "request": request, "social": social, "problems": problems})
+	image_dict = {}
+	for problem in problems:
+		images = ProblemImage.objects.filter(problem=problem)
+		image_dict[problem] = images
+	context = RequestContext(request, {"user": request.user, "request": request, "social": social, "problems": problems, "image_dict": image_dict})
 	return render_to_response("app/index.html", context_instance=context)
 
 def profile(request):

@@ -6,6 +6,7 @@
 <title>Worldli</title>
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<script src="http://www.webglearth.com/v2/api.js"></script>
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -42,7 +43,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Hello {{ user.get_short_name }}</a></li>
           <li class="dropdown">
-            <a class="dropdown-toggle" style="padding:0px;" data-toggle="dropdown" role="button" aria-expanded="false" ><img class="img-circle" id="nav-image" src="http://graph.facebook.com/{{ social.uid }}/picture"><span class="caret"></span></a>
+            <a class="dropdown-toggle" style="padding:0px;" data-toggle="dropdown" role="button" aria-expanded="false" ><img class="img-circle" id="nav-image" src="https://graph.facebook.com/{{ social.uid }}/picture"><span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <li><a href="{% url 'profile' %}">My Profile</a></li>
               <li><a href="{% url 'my_post' %}">My Posts</a></li>
