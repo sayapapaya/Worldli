@@ -25,6 +25,8 @@ urlpatterns = patterns('',
     url(r'^my_post/', views.my_post, name="my_post"),
     url(r'^edit_post/(?P<problem_id>\d+)$', views.edit_post, name="edit_post"),
     url(r'^edit_problem/(?P<problem_id>\d+)$', views.edit_problem, name="edit_problem"),
+    url(r'^search_autocomplete/', views.search_autocomplete, name="search_autocomplete"),
+    url(r'^search/', views.search, name="search"),
 )
 
 urlpatterns += patterns('',

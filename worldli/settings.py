@@ -111,7 +111,7 @@ DATABASES['default'] =  dj_database_url.config()
 
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
@@ -134,4 +134,11 @@ MEDIA_URL = '/media/'
 #  os.path.join(PROJECT_ROOT, 'static'),
 #  os.path.join(PROJECT_ROOT, 'media'),
 #)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 

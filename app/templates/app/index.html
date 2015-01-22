@@ -18,41 +18,101 @@
      fjs.parentNode.insertBefore(js, fjs);
    }(document, 'script', 'facebook-jssdk'));
 
+$(document).ready(function(){
 
-function initialize() {
-  var options = {
-    sky: true,
-    atmosphere: true,
-    dragging: true,
-    tilting: true,
-    zooming: true,
-    center: [46.8011, 8.2266],
-    zoom: 2
-  };
-  earth = new WE.map('earth_div', options);
-  var natural = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
-    tileSize: 256,
-    tms: true
-  });
-  natural.addTo(earth);
+var options = {
+  sky: true,
+  atmosphere: true,
+  dragging: true,
+  tilting: true,
+  zooming: true,
+  center: [46.8011, 8.2266],
+  zoom: 2
+};
+earth = new WE.map('earth_div', options);
+var natural = WE.tileLayer('http://data.webglearth.com/natural-earth-color/{z}/{x}/{y}.jpg', {
+  tileSize: 256,
+  tms: true
+});
+natural.addTo(earth);
 
-  var toner = WE.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
-    attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.',
-    opacity: 0.6
-  });
-  toner.addTo(earth);
+var toner = WE.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+  attribution: 'Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.',
+  opacity: 0.6
+});
+toner.addTo(earth);
+
+var marker_dict = {};
 
 {% for problem, images in image_dict.items %}
-
-  var marker1 = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
-  marker1.bindPopup("<h3>{{problem.title}}</h3><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100px' height='100px'><br>{{problem.description}}<br /><button class='btn btn-default'><a href='{% url 'view_post' problem.id %}'>Read more</a></button></span>",{maxWidth:150,closeButton:true})
+  var marker = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
+  marker_dict[{{ problem.id }}] = marker;
+  marker.bindPopup("<h3>{{problem.title}}</h3><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100px' height='100px'><br>{{problem.description}}<br /><button class='btn btn-default'><a href='{% url 'view_post' problem.id %}'>Read more</a></button></span>",{maxWidth:150,closeButton:true})
 {% endfor %}
+
 /*
-  marker.bindPopup("<h3>Lack of Clean Water</h3><span 'style='font-size:8px;color:#999'><img src='http://www.nofrackingway.us/wp-content/uploads/2012/09/dirty-water.jpeg' width='100px' height='100px'><br>there is rarely an clean water in India. It kinda sucks. People drink their own urine half the time.<br /><h6> by Saya Date </h6></span>", {maxWidth: 150, closeButton: true})//.openPopup();*/
+  var marker2 = WE.marker([40, -70]).addTo(earth);
+  marker2.bindPopup("<h3>Lack of Clean Water</h3><span 'style='font-size:8px;color:#999'><img src='http://www.nofrackingway.us/wp-content/uploads/2012/09/dirty-water.jpeg' width='100px' height='100px'><br>there is rarely an clean water in India. It kinda sucks. People drink their own urine half the time.<br /><h6> by Saya Date </h6></span>", {maxWidth: 150, closeButton: true})//.openPopup();*/
+
+
+
+// Search bar
+function hitEnter(e){
+  var key = e.which || e.keyCode;
+  if (key == 13) { // 13 is enter
+    var search_text = $('#search')[0].value;
+    $.ajax({
+      url: "{% url 'search' %}",
+      type: "POST",
+      data: {"search_text": search_text},
+      success: function(result) {
+        // sets the earth view at a certain latitude and longitude
+        earth.setView([result.latitude,result.longitude],earth.getZoom());
+        marker_dict[result.id].openPopup();
+      },
+      error: function(xhr, errmsg, err) {
+        console.log(errmsg);
+      }
+    });
+  }
 }
 
-$(document).ready(function(){
-  initialize();
+$('#search')[0].addEventListener("keyup", function(){
+  var csrftoken = getCookie('csrftoken');
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+  });
+  var search_text = $('#search')[0].value;
+  $.ajax({
+    url: "{% url 'search_autocomplete' %}",
+    type: "POST",
+    data: {"search_text": search_text},
+    success: function(result) {
+      var tags = [];
+      for (var i=1; i <= Object.keys(result[0]).length; i++){
+        tags.push(result[0][i].title);
+      };
+      if (tags.length == 0){
+        tags.push("No search results");
+      };
+      $( "#search" ).autocomplete({
+        source: tags,
+        select: hitEnter
+      });
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+    }
+  });
+});
+
+$('#search')[0].addEventListener('keypress', hitEnter);
+
+
 });
 
 </script>
@@ -78,6 +138,10 @@ $(document).ready(function(){
 		<div class="fb-bg" onclick="location.href='{% url 'social:begin' 'facebook' %}?next={{ request.path }}'"></div>
 	</div>
 {% endif %}
+
+<div class="search">
+  <input id="search" type="search" placeholder="Search">
+</div>
 
 <div id="earth_div"></div>
 

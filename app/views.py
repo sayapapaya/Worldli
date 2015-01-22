@@ -5,6 +5,8 @@ from django.http import Http404, HttpResponse
 from .forms import UploadImageForm
 from app.models import *
 import requests
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 def index(request):
 	social = None
@@ -182,3 +184,25 @@ def place_autocomplete(request):
 		r = requests.get(url)
 		return HttpResponse(r.text)
 
+def search_autocomplete(request):
+	if request.method == "POST":
+		search_text = request.POST["search_text"]
+	else:
+		search_text = ""
+	problems = Problem.objects.filter(title__contains=search_text)
+	results = [{}]
+	for problem in problems:
+		results[0][problem.id] = {"title": problem.title} 
+	data = json.dumps(results)
+	return HttpResponse(data, "application/json")
+
+def search(request):
+	if request.method == "POST":
+		search_text = request.POST["search_text"]
+		try:
+			problem = Problem.objects.get(title=search_text)
+			results = {"id": problem.id, "latitude":problem.latitude, "longitude":problem.longitude}
+			data = json.dumps(results)
+			return HttpResponse(data, "application/json")
+		except:
+			return HttpResponse("Doesn't exist")
