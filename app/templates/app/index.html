@@ -77,6 +77,39 @@ function hitEnter(e){
   }
 }
 
+function searchFunction(){
+  var search_text = $('#search')[0].value;
+  var one = $('#search-button-1')[0].innerHTML;
+  var two  = $('#search-button-2')[0].innerHTML;
+  var url;
+  if ( one.indexOf("Problems") > -1){ // the string contains "Problems"
+    if (two.indexOf("Name") > -1){
+      url = "{% url 'search'%}";
+    } else {
+    }
+  } else {
+    if (two.indexOf("Name") > -1){
+      url = "{% url 'search_people_name' %}";
+    } else {
+      url = "{% url 'search_skills' %}";
+    }
+  }
+  $.ajax({
+    url: url,
+    type: "POST",
+    data: {"search_text": search_text},
+    success: function(result) {
+      // sets the earth view at a certain latitude and longitude
+      //earth.setView([result.latitude,result.longitude],earth.getZoom());
+      //marker_dict[result.id].openPopup();
+      console.log(result);
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+    }
+  });
+}
+
 $('#search')[0].addEventListener("keyup", function(){
   var csrftoken = getCookie('csrftoken');
   $.ajaxSetup({
@@ -92,16 +125,21 @@ $('#search')[0].addEventListener("keyup", function(){
     type: "POST",
     data: {"search_text": search_text},
     success: function(result) {
+      console.log(result);
       var tags = [];
-      for (var i=1; i <= Object.keys(result[0]).length; i++){
+      for (var i=1; i <= Object.keys(result[0]).length && i<= 3; i++){
         tags.push(result[0][i].title);
       };
+      for (var i=1; i <= Object.keys(result[1]).length && i<=3; i++){
+        tags.push(result[1][i].name);
+      };
+      console.log(tags);
       if (tags.length == 0){
         tags.push("No search results");
       };
       $( "#search" ).autocomplete({
         source: tags,
-        select: hitEnter
+        select: searchFunction
       });
     },
     error: function(xhr, errmsg, err) {
@@ -110,7 +148,27 @@ $('#search')[0].addEventListener("keyup", function(){
   });
 });
 
-$('#search')[0].addEventListener('keypress', hitEnter);
+$('#search-button-submit')[0].addEventListener('click', searchFunction);
+
+$('#problems-choice')[0].addEventListener('click', function(){
+  $('#search-button-1')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
+  $('#category-chioce')[0].style.display = "block";
+  $('#skills-chioce')[0].style.display = "none";
+});
+
+$('#people-chioce')[0].addEventListener('click', function(){
+  $('#search-button-1')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
+  $('#category-chioce')[0].style.display = "none";
+  $('#skills-chioce')[0].style.display = "block";
+})
+
+function changeButtonName(){
+  $('#search-button-2')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
+}
+
+$('#name-chioce')[0].addEventListener('click', changeButtonName);
+$('#skills-chioce')[0].addEventListener('click', changeButtonName);
+$('#category-chioce')[0].addEventListener('click', changeButtonName);
 
 
 });
@@ -145,29 +203,29 @@ $('#search')[0].addEventListener('keypress', hitEnter);
 </div>-->
 <center>
 <div id="search-container">
-<form class="form-inline">
+<div class="form-inline">
   <div class="form-group">
     <input type="text" class="form-control" id="search" placeholder="Search">
   </div>
   <div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Problems&nbsp<span class="caret"></span>
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="search-button-1">Problems&nbsp<span class="caret"></span>
     </button>
     <ul class="dropdown-menu" role="menu">
-      <li><a href="#">Problems</a></li>
-      <li><a href="#">People</a></li>
+      <li id="problems-choice"><a href="#">Problems</a></li>
+      <li id="people-chioce"><a href="#">People</a></li>
     </ul>
   </div>
   <div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Name&nbsp<span class="caret"></span>
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="search-button-2">Name&nbsp<span class="caret"></span>
     </button>
     <ul class="dropdown-menu" role="menu">
-      <li><a href="#">Name</a></li>
-      <li><a href="#">Skills</a></li>
-      <li><a href="#">Category</a></li>
+      <li id="name-chioce"><a href="#">Name</a></li>
+      <li id="skills-chioce" style="display:none;"><a href="#">Skills</a></li>
+      <li id="category-chioce"><a href="#">Category</a></li>
     </ul>
   </div>
-  <button type="submit" class="btn btn-default">Search</button>
-</form>
+  <button type="submit" id="search-button-submit" class="btn btn-default">Search</button>
+</div>
 </div>
 </center>
 

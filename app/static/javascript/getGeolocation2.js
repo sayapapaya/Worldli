@@ -15,6 +15,8 @@ function findCityName(latitude,longitude) {
 				for (i in result["results"]) {
 					if (result["results"][i]["types"][0] == "locality")
 						$("#location")[0].value = result["results"][i]["formatted_address"];
+						$('#latitude')[0].value = result["results"][i]["geometry"]["location"]["lat"];
+						$('#longitude')[0].value = result["results"][i]["geometry"]["location"]["lng"];
 				}
 			}
 		},

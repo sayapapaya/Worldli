@@ -7,6 +7,7 @@ from app.models import *
 import requests
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q
 
 def index(request):
 	social = None
@@ -39,11 +40,12 @@ def create_user(request):
 		education = request.POST.get('education')
 		location = request.POST.get('location')
 		skills = request.POST.getlist('skills[]')
-		print skills
+		latitude = request.POST.get('latitude')
+		longitude = request.POST.get('longitude')
 		# save to database
 		person = Person.objects.filter(user=request.user)
 		if len(person) == 0:
-			person = Person(user=request.user, first_name=first_name, last_name=last_name, email=email, education=education, location=location)
+			person = Person(user=request.user, first_name=first_name, last_name=last_name, email=email, education=education, location=location, latitude=latitude, longitude=longitude)
 			person.save()
 			for i in range(len(skills)-1):
 				s = Skill(text=skills[i], person=person[0])
@@ -52,7 +54,6 @@ def create_user(request):
 			old_skills = Skill.objects.filter(person=person[0])
 			for i in range(len(old_skills)):
 				if (old_skills[i] not in skills):
-					print old_skills[i]
 					s = Skill.objects.get(text=old_skills[i], person=person[0])
 					s.delete()
 			for i in range(len(skills)-1):
@@ -64,6 +65,8 @@ def create_user(request):
 			person[0].email = email
 			person[0].education = education
 			person[0].location = location
+			person[0].latitude = latitude
+			person[0].longitude = longitude
 			person[0].save()
 		return HttpResponse("data saved successfully")
 
@@ -215,9 +218,12 @@ def search_autocomplete(request):
 	else:
 		search_text = ""
 	problems = Problem.objects.filter(title__contains=search_text)
-	results = [{}]
+	people = Person.objects.filter(Q(first_name__contains=search_text) | Q(last_name__contains=search_text))
+	results = [{},{}]
 	for problem in problems:
 		results[0][problem.id] = {"title": problem.title} 
+	for person in people:
+		results[1][person.id] = {"name": person.first_name+" "+person.last_name}
 	data = json.dumps(results)
 	return HttpResponse(data, "application/json")
 
@@ -232,9 +238,36 @@ def search(request):
 		except:
 			return HttpResponse("Doesn't exist")
 
-#def search_skills(request):
-#	if request.method == "POST":
-#		search_text = request.POST["search_text"]
+def search_people_name(request):
+	if request.method == "POST":
+		search_text = request.POST["search_text"]
+		try:
+			people = Person.objects.filter(Q(first_name__contains=search_text) | Q(last_name__contains=search_text))
+			results = {}
+			print people
+			for i in range(len(people)):
+				results[i] = {"id": people[i].id, "latitude": people[i].latitude, "longitude":people[i].longitude}
+			return HttpResponse(json.dumps(results), "application/json")
+		except:
+			return HttpResponse("Doesn't exist")
+
+def search_skills(request):
+	if request.method == "POST":
+		search_text = request.POST["search_text"]
+		try:
+			skills = Skill.objects.filter(text=search_text)
+			print skills
+			people = []
+			for skill in skills:
+				people.append(skill.person)
+			people = list(set(people))
+			results = {}
+			for i in range(len(people)):
+				results[i] = {"id": people[i].id, "latitude": people[i].latitude, "longitude": people[i].longitude}
+			return HttpResponse(json.dumps(results), "application/json")
+		except Exception, e:
+			print e
+			return HttpResponse("Doesn't exist")
 
 def create_comment(request, problem_id):
 	if request.method == "POST":

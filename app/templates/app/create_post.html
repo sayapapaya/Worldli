@@ -68,13 +68,9 @@ function getAutoComplete(){
 }
 
 function validateForm(){
-  console.log('hello');
   var title = $('[name="title"')[0].value;
   var description = $('[name="description"')[0].value;
   var location = $('[name="location"]')[0].value;
-  console.log(title);
-  console.log(description);
-  console.log(location);
   if (title == "" || description == "" || location == "") {
     $('#form-error')[0].innerHTML = "One or more of the fields are blank";
     $('#form-error')[0].style.display = "block";

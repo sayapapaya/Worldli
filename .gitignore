@@ -5,4 +5,3 @@ db.sqlite3
 env/*
 app/media/*
 worldli/media/*
-worldli/settings.py

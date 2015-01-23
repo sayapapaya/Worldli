@@ -10,14 +10,14 @@
 {% block script %}
 <script>
 
+var API_KEY = "AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg";
+
 function submit_form() {
   event.preventDefault();
-  console.log("form submitted");
-  create_user();
+  saveLatlgn();
 }
 
 function create_user(){
-  console.log($('#first_name')[0].value);
   var csrftoken = getCookie('csrftoken');
   $.ajaxSetup({
     beforeSend: function(xhr, settings) {
@@ -30,11 +30,10 @@ function create_user(){
   for (var i = 0; i < $('#skill-tags')[0].children.length; i++){
     skills.push($('#skill-tags')[0].children[i].children[0].innerHTML);
   }
-  console.log(skills);
   $.ajax({
     url: "{% url 'create_user' %}",
     type: "POST",
-    data: {"first_name":$('#first_name')[0].value,"last_name":$('#last_name')[0].value, "email":$('#email')[0].value, "education":$('#education')[0].value, "location": $('#location')[0].value, "skills": skills},
+    data: {"first_name":$('#first_name')[0].value,"last_name":$('#last_name')[0].value, "email":$('#email')[0].value, "education":$('#education')[0].value, "location": $('#location')[0].value, "skills": skills, "latitude": $('#latitude')[0].value, "longitude": $('#longitude')[0].value},
     success: function(json) {
       console.log("success");
       $('.alert-success')[0].style.display = "block";
@@ -73,6 +72,26 @@ function getAutoComplete(){
     },
     error: function(xhr, errmsg, err) {
         console.log(errmsg);
+    }
+  });
+}
+
+function saveLatlgn(){
+  var location = $('#location')[0].value;
+  var url = "https://maps.googleapis.com/maps/api/geocode/json?address="+location+"&key="+API_KEY;
+  $.ajax({
+    url: url,
+    type: "GET",
+    dataType: "json",
+    success: function(result){
+      var lat = result["results"][0]["geometry"]["location"]["lat"];
+      var lng = result["results"][0]["geometry"]["location"]["lng"];
+      $('#latitude')[0].value = lat;
+      $('#longitude')[0].value = lng;
+      create_user();
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
     }
   });
 }
@@ -128,7 +147,7 @@ body{
   	</div>
     <div class="form-group">
       <label>Where do you live?</label>
-      <input id="location" type="text" class="form-control" placeholder="LinkedIn" value="{{ person.0.location }}">
+      <input id="location" type="text" class="form-control" value="{{ person.0.location }}">
     </div>
     <div class="form-group">
       <label>What are your skills?</label>
@@ -158,7 +177,9 @@ body{
       <ul id="skill-tags" name="skills" type="text" class="form-control" style="height:100px;"></ul>
     </div>
     {% endif %}
-    <button type="submit" class="btn btn-default">Save</button>
+    <input id="latitude" type="text" style="display:none;">
+    <input id="longitude" type="text" style="display:none;">
+    <button type="submit" id="save-button" class="btn btn-default">Save</button>
 </form>
 </div>
 
