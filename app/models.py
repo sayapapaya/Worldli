@@ -9,10 +9,17 @@ class Person(models.Model):
 	last_name = models.CharField(max_length=200)
 	email = models.EmailField(max_length=254, unique=True)
 	education = models.CharField(max_length=500, blank=True)
-	linkedin = models.URLField(blank=True)
+	location = models.CharField(max_length=200, blank=True)
 
 	def __str__(self):
 		return self.first_name + " " + self.last_name
+
+class Skill(models.Model):
+	text = models.CharField(max_length=200)
+	person = models.ForeignKey(Person)
+
+	def __str__(self):
+		return self.text
 
 class Problem(models.Model):
 	user = models.ForeignKey(User)
@@ -45,8 +52,10 @@ class Solution(models.Model):
 
 class Comment(models.Model):
 	user = models.ForeignKey(User)
+	problem = models.ForeignKey(Problem)
+	followup = models.ForeignKey('self', default=0, null=True, blank=True)
+	upvotes = models.IntegerField()
 	text = models.TextField()
-	solution = models.ForeignKey(Solution)
 
 	def __str__(self):
 		return self.text

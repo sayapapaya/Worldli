@@ -25,8 +25,11 @@ urlpatterns = patterns('',
     url(r'^my_post/', views.my_post, name="my_post"),
     url(r'^edit_post/(?P<problem_id>\d+)$', views.edit_post, name="edit_post"),
     url(r'^edit_problem/(?P<problem_id>\d+)$', views.edit_problem, name="edit_problem"),
+    url(r'^delete_problem/(?P<problem_id>\d+)$', views.delete_problem, name="delete_problem"),
     url(r'^search_autocomplete/', views.search_autocomplete, name="search_autocomplete"),
     url(r'^search/', views.search, name="search"),
+    url(r'^create_comment/(?P<problem_id>\d+)$', views.create_comment, name="create_comment"),
+    url(r'^delete_comment/(?P<comment_id>\d+)$', views.delete_comment, name="delete_comment"),
 )
 
 urlpatterns += patterns('',

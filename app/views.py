@@ -27,7 +27,8 @@ def profile(request):
 	else:
 		raise Http404("Profile does not exist.")
 	person = Person.objects.filter(user=request.user)
-	context = RequestContext(request, {"user": request.user, "request": request,"social": social, "person":person})
+	skills = Skill.objects.filter(person=person)
+	context = RequestContext(request, {"user": request.user, "request": request,"social": social, "person":person, "skills":skills})
 	return render_to_response("app/profile.html", context_instance=context)
 
 def create_user(request):
@@ -36,18 +37,33 @@ def create_user(request):
 		last_name = request.POST.get('last_name')
 		email = request.POST.get('email')
 		education = request.POST.get('education')
-		linkedin = request.POST.get('linkedin')
+		location = request.POST.get('location')
+		skills = request.POST.getlist('skills[]')
+		print skills
 		# save to database
 		person = Person.objects.filter(user=request.user)
 		if len(person) == 0:
-			person = Person(user=request.user, first_name=first_name, last_name=last_name, email=email, education=education, linkedin=linkedin)
+			person = Person(user=request.user, first_name=first_name, last_name=last_name, email=email, education=education, location=location)
 			person.save()
+			for i in range(len(skills)-1):
+				s = Skill(text=skills[i], person=person[0])
+				s.save()
 		else:
+			old_skills = Skill.objects.filter(person=person[0])
+			for i in range(len(old_skills)):
+				if (old_skills[i] not in skills):
+					print old_skills[i]
+					s = Skill.objects.get(text=old_skills[i], person=person[0])
+					s.delete()
+			for i in range(len(skills)-1):
+				if (skills[i] not in old_skills):
+					s = Skill(text=skills[i], person=person[0])
+					s.save()
 			person[0].first_name = first_name
 			person[0].last_name = last_name
 			person[0].email = email
 			person[0].education = education
-			person[0].linkedin = linkedin
+			person[0].location = location
 			person[0].save()
 		return HttpResponse("data saved successfully")
 
@@ -88,7 +104,11 @@ def view_post(request, problem_id):
 		social = request.user.social_auth.get(provider="facebook")
 	problem = Problem.objects.get(id=problem_id)
 	images = ProblemImage.objects.filter(problem=problem)
-	context = RequestContext(request, {"social":social, "problem": problem, "images":images})
+	comments = Comment.objects.filter(problem=problem)
+	comment_users = {}
+	for comment in comments:
+		comment_users[comment] = comment.user.social_auth.get(provider="facebook")
+	context = RequestContext(request, {"user": request.user, "social":social, "problem": problem, "images":images, "comments":comments, "comment_users":comment_users})
 	return render_to_response("app/view_post.html", context_instance=context)
 
 def create_problem(request):
@@ -148,6 +168,11 @@ def edit_problem(request, problem_id):
 	context = RequestContext(request, {"social":social, "problem":problem, "images": images})
 	return render_to_response("app/upload_images.html", context_instance=context)
 
+def delete_problem(request, problem_id):
+	problem = Problem.objects.get(id=problem_id)
+	problem.delete()
+	return my_post(request)
+
 def upload_images(request, problem_id):
 	if request.method == "POST":
 		form = UploadImageForm(request.POST, request.FILES)
@@ -206,3 +231,26 @@ def search(request):
 			return HttpResponse(data, "application/json")
 		except:
 			return HttpResponse("Doesn't exist")
+
+#def search_skills(request):
+#	if request.method == "POST":
+#		search_text = request.POST["search_text"]
+
+def create_comment(request, problem_id):
+	if request.method == "POST":
+		text = request.POST.get('text')
+		try: 
+			followup_id = request.POST.get('comment_id');
+			followup = Comment.objects.get(id=followup_id)
+			comment = Comment(user=request.user, problem=Problem.objects.get(id=problem_id), upvotes=0, followup=followup, text=text)
+			comment.save()
+		except:
+			comment = Comment(user=request.user, problem=Problem.objects.get(id=problem_id), upvotes=0, text=text)
+			comment.save()
+		return view_post(request, problem_id)
+
+def delete_comment(request, comment_id):
+	comment = Comment.objects.get(id=comment_id)
+	comment.delete()
+	problem_id = request.GET['problem_id']
+	return view_post(request, problem_id)

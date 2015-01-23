@@ -1,13 +1,11 @@
 {% extends "app/base.html" %}
 
-{% block script %}
-<script>
-$(document).ready(function() {
-
-
-
-});
-</script>
+{% block style %}
+<style>
+body{
+	background-color: #FDF3E7;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -19,13 +17,15 @@ $(document).ready(function() {
 <div id="problem-container">
 
 {% for problem, images in image_dict.items %}
-<div class="problem" >
-
+<div class="problem">
+  <span id="remove" class="glyphicon glyphicon-remove" data-toggle="modal" data-target="#{{ problem.id }}"></span>
   <span id="edit" onclick="location.href='{% url 'edit_post' problem.id %}'" class="glyphicon glyphicon-pencil"></span>
   <h2 class="problem-title">{{ problem.title }}</h2>
-  <a href="{% url 'view_post' problem.id %}"><img class="image" src="{{ images.0.image.url }}" border="0"></a>
+  <a href="{% url 'view_post' problem.id %}"><img class="image" src="{{ images.0.image.url }}" border="10"></a>
+  </br>
+  <center><a href="{% url 'view_post' problem.id %}">View</a></center>
 </div>
-{% endfor %}
 
+{% endfor %}
 </div>
 {% endblock %}

@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'app',
     'social.apps.django_app.default',
+    'storages',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -142,3 +143,18 @@ DATABASES = {
     }
 }
 
+AWS_STORAGE_BUCKET_NAME = 'worldli'
+AWS_ACCESS_KEY_ID = 'AKIAICM37IF7YNL7HAUA'
+AWS_SECRET_ACCESS_KEY = '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'
+
+# Tell django-storages that when coming up with the URL for an item in S3 storage, keep
+# it simple - just use this domain plus the path. (If this isn't set, things get complicated).
+# This controls how the `static` template tag from `staticfiles` gets expanded, if you're using it.
+# We also use it in the next setting.
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+MEDIA_URL = "https://%s/media/" % AWS_S3_CUSTOM_DOMAIN
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'

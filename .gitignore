@@ -3,3 +3,6 @@ db.sqlite3
 *.jpg
 *.pyc
 env/*
+app/media/*
+worldli/media/*
+worldli/settings.py

@@ -47,7 +47,7 @@ var marker_dict = {};
 {% for problem, images in image_dict.items %}
   var marker = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
   marker_dict[{{ problem.id }}] = marker;
-  marker.bindPopup("<h3>{{problem.title}}</h3><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100px' height='100px'><br>{{problem.description}}<br /><button class='btn btn-default'><a href='{% url 'view_post' problem.id %}'>Read more</a></button></span>",{maxWidth:150,closeButton:true})
+  marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100%' height='auto'><a href='{% url 'view_post' problem.id %}'>Read more</a></span>",{maxWidth:150,closeButton:true})
 {% endfor %}
 
 /*
@@ -139,15 +139,38 @@ $('#search')[0].addEventListener('keypress', hitEnter);
 	</div>
 {% endif %}
 
-<div class="search">
+
+<!--<div class="search">
   <input id="search" type="search" placeholder="Search">
+</div>-->
+<center>
+<div id="search-container">
+<form class="form-inline">
+  <div class="form-group">
+    <input type="text" class="form-control" id="search" placeholder="Search">
+  </div>
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Problems&nbsp<span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#">Problems</a></li>
+      <li><a href="#">People</a></li>
+    </ul>
+  </div>
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Name&nbsp<span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#">Name</a></li>
+      <li><a href="#">Skills</a></li>
+      <li><a href="#">Category</a></li>
+    </ul>
+  </div>
+  <button type="submit" class="btn btn-default">Search</button>
+</form>
 </div>
+</center>
 
 <div id="earth_div"></div>
 
-<ul>
-{% for problem in problems %}
-	<li><a href="{% url 'view_post' problem.id %}">{{ problem.title }}</a></li>
-{% endfor %}
-</ul>
 {% endblock%}

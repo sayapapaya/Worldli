@@ -1,5 +1,12 @@
 {% extends "app/base.html" %}
 
+{% block header_file %}
+<script src="{{ STATIC_URL }}javascript/getGeolocation2.js"></script>
+<script src="{{ STATIC_URL }}javascript/tagit.min.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
+<link href="{{ STATIC_URL }}css/jquery.tagit.css" rel="stylesheet" type="text/css">
+{% endblock %}
+
 {% block script %}
 <script>
 
@@ -19,10 +26,15 @@ function create_user(){
         }
     }
   });
+  var skills = [];
+  for (var i = 0; i < $('#skill-tags')[0].children.length; i++){
+    skills.push($('#skill-tags')[0].children[i].children[0].innerHTML);
+  }
+  console.log(skills);
   $.ajax({
     url: "{% url 'create_user' %}",
     type: "POST",
-    data: {"first_name":$('#first_name')[0].value,"last_name":$('#last_name')[0].value, "email":$('#email')[0].value, "education":$('#education')[0].value, "linkedin":$('#linkedin')[0].value},
+    data: {"first_name":$('#first_name')[0].value,"last_name":$('#last_name')[0].value, "email":$('#email')[0].value, "education":$('#education')[0].value, "location": $('#location')[0].value, "skills": skills},
     success: function(json) {
       console.log("success");
       $('.alert-success')[0].style.display = "block";
@@ -33,6 +45,45 @@ function create_user(){
     }
   });
 }
+
+function getAutoComplete(){
+  var search = $('#location')[0].value;
+  var csrftoken = getCookie('csrftoken');
+  $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+  });
+  $.ajax({
+    url: "{% url 'place_autocomplete' %}",
+    type: "POST",
+    dataType: "json",
+    data: {"search":search},
+    success: function(result) {
+      var predictions = result["predictions"];
+      var tags = [];
+      for (i in predictions){
+        tags.push(predictions[i]["description"]);
+      };
+      $( "#location" ).autocomplete({
+        source: tags
+      });
+    },
+    error: function(xhr, errmsg, err) {
+        console.log(errmsg);
+    }
+  });
+}
+
+$(document).ready(function(){
+  
+  $('#location')[0].addEventListener('keyup', getAutoComplete);
+
+  $('#skill-tags').tagit();
+});
+
 </script>
 {% endblock %}
 
@@ -40,6 +91,13 @@ function create_user(){
 <ul class="nav navbar-nav navbar-left">
   <li><a href="{% url 'create_post' %}">Post a Problem</a></li>
 </ul>
+{% endblock %}
+
+{% block style %}
+<style>
+body{
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -69,8 +127,20 @@ function create_user(){
     	<input id="education" type="text" class="form-control" placeholder="Add education" value="{{ person.0.education }}">
   	</div>
     <div class="form-group">
-      <label>LinkedIn URL</label>
-      <input id="linkedin" type="url" class="form-control" placeholder="LinkedIn" value="{{ person.0.linkedin }}">
+      <label>Where do you live?</label>
+      <input id="location" type="text" class="form-control" placeholder="LinkedIn" value="{{ person.0.location }}">
+    </div>
+    <div class="form-group">
+      <label>What are your skills?</label>
+      <p class="help-block">Ex. Java programming, web_development, civil_engineer, law, teaching, languages...etc</p>
+      <p class="help-block">Use tab to include multiple skills</p>
+      <ul id="skill-tags" name="skills" type="text" class="form-control" style="height:100px;">
+        {% if skills %}
+          {% for skill in skills%}
+            <li>{{ skill.text }}</li>
+          {% endfor %}
+        {% endif %}
+      </ul>
     </div>
     {% else %}
     <div class="form-group">
@@ -78,12 +148,19 @@ function create_user(){
       <input id="education" type="text" class="form-control" placeholder="Add education">
     </div>
     <div class="form-group">
-      <label>LinkedIn URL</label>
-      <input id="linkedin" type="url" class="form-control" placeholder="LinkedIn">
+      <label>Where do you live?</label>
+      <input id="location" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>What are some of your skills?</label>
+      <p class="help-block">Ex. Java programming, web_development, civil_engineer, law, teaching, languages...etc</p>
+      <p class="help-block">Use tab to include multiple skills</p>
+      <ul id="skill-tags" name="skills" type="text" class="form-control" style="height:100px;"></ul>
     </div>
     {% endif %}
     <button type="submit" class="btn btn-default">Save</button>
 </form>
 </div>
+
 
 {% endblock %}

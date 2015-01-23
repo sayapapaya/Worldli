@@ -1,5 +1,13 @@
 {% extends "app/base.html" %}
 
+{% block style %}
+<style>
+body{
+  background-color: #FDF3E7;
+}
+</style>
+{% endblock %}
+
 {% block header_file %}
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg"></script>
 {% endblock %}
@@ -26,6 +34,12 @@ function initialize() {
 	  zoom: 8
 	};
 	var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+}
+
+for (var i=0; i<$('.reply-button').length; i++){
+  $('.reply-button')[i].addEventListener('click', function(){
+
+  });
 }
 
 });
@@ -91,6 +105,56 @@ function initialize() {
 <div id="problem-content">
 <p>{{ problem.description }}</p>
 </div>
+
+<center><h3>Comments</h3></center>
+<div style="margin-left:15%;border-top:">
+{% for comment, social in comment_users.items %}
+<div class="comment">
+  <div>
+    <img class="avatar" src="https://graph.facebook.com/{{ social.uid }}/picture?small">
+    <p class="comment-name"><strong>{{ comment.user.first_name }}&nbsp{{ comment.user.last_name }}</strong></p>
+    <p>{{ comment.upvotes }} upvotes</p>
+  </div></br>
+  <div style="margin-right:15%;text-align:justify;"><p>{{ comment.text }}</p></div>
+  {% if comment.user != user %}
+    <a type="button" class="btn btn-sm btn-default">upvote</a>
+  {% else %}
+    <a type="button" class="btn btn-sm btn-default" disabled="disabled">upvote</a>
+    <a type="button" id="remove-comment-button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#{{ comment.id }}">remove</a>
+  {% endif %}
+</div>
+</br>
+
+<!-- Comment Modal -->
+<div class="modal fade" id="{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Are you sure that you want to remove the comment?</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{ comment.text }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="location.href='{% url 'delete_comment' comment.id %}?problem_id= {{ problem.id }}'">Yes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">No, take me back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endfor %}
+</div>
+
+<form class="comment-form" action="{% url 'create_comment' problem.id %}" method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label><h4>Leave a comment</h4></label>
+    <textarea class="comment-box" name="text" class="form-control"></textarea>
+  </div>
+  <button class="btn btn-default">Submit</button>
+</form>
 
 </div>
 {% endblock %}
