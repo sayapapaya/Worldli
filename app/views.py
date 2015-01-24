@@ -218,12 +218,9 @@ def search_autocomplete(request):
 	else:
 		search_text = ""
 	problems = Problem.objects.filter(title__contains=search_text)
-	people = Person.objects.filter(Q(first_name__contains=search_text) | Q(last_name__contains=search_text))
-	results = [{},{}]
+	results = [{}]
 	for problem in problems:
 		results[0][problem.id] = {"title": problem.title} 
-	for person in people:
-		results[1][person.id] = {"name": person.first_name+" "+person.last_name}
 	data = json.dumps(results)
 	return HttpResponse(data, "application/json")
 

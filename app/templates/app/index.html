@@ -50,59 +50,18 @@ var marker_dict = {};
   marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100%' height='auto'><a href='{% url 'view_post' problem.id %}'>Read more</a></span>",{maxWidth:150,closeButton:true})
 {% endfor %}
 
-/*
-  var marker2 = WE.marker([40, -70]).addTo(earth);
-  marker2.bindPopup("<h3>Lack of Clean Water</h3><span 'style='font-size:8px;color:#999'><img src='http://www.nofrackingway.us/wp-content/uploads/2012/09/dirty-water.jpeg' width='100px' height='100px'><br>there is rarely an clean water in India. It kinda sucks. People drink their own urine half the time.<br /><h6> by Saya Date </h6></span>", {maxWidth: 150, closeButton: true})//.openPopup();*/
-
-
-
-// Search bar
-function hitEnter(e){
-  var key = e.which || e.keyCode;
-  if (key == 13) { // 13 is enter
-    var search_text = $('#search')[0].value;
-    $.ajax({
-      url: "{% url 'search' %}",
-      type: "POST",
-      data: {"search_text": search_text},
-      success: function(result) {
-        // sets the earth view at a certain latitude and longitude
-        earth.setView([result.latitude,result.longitude],earth.getZoom());
-        marker_dict[result.id].openPopup();
-      },
-      error: function(xhr, errmsg, err) {
-        console.log(errmsg);
-      }
-    });
-  }
-}
-
 function searchFunction(){
   var search_text = $('#search')[0].value;
-  var one = $('#search-button-1')[0].innerHTML;
-  var two  = $('#search-button-2')[0].innerHTML;
-  var url;
-  if ( one.indexOf("Problems") > -1){ // the string contains "Problems"
-    if (two.indexOf("Name") > -1){
-      url = "{% url 'search'%}";
-    } else {
-    }
-  } else {
-    if (two.indexOf("Name") > -1){
-      url = "{% url 'search_people_name' %}";
-    } else {
-      url = "{% url 'search_skills' %}";
-    }
-  }
   $.ajax({
-    url: url,
+    url: "{% url 'search' %}",
     type: "POST",
     data: {"search_text": search_text},
     success: function(result) {
-      // sets the earth view at a certain latitude and longitude
-      //earth.setView([result.latitude,result.longitude],earth.getZoom());
-      //marker_dict[result.id].openPopup();
-      console.log(result);
+      if (result != "Doesn't exist"){
+        // sets the earth view at a certain latitude and longitude
+        earth.panTo([result.latitude,result.longitude],earth.getZoom());
+        marker_dict[result.id].openPopup();
+      }
     },
     error: function(xhr, errmsg, err) {
       console.log(errmsg);
@@ -125,15 +84,10 @@ $('#search')[0].addEventListener("keyup", function(){
     type: "POST",
     data: {"search_text": search_text},
     success: function(result) {
-      console.log(result);
       var tags = [];
-      for (var i=1; i <= Object.keys(result[0]).length && i<= 3; i++){
+      for (var i=1; i <= Object.keys(result[0]).length && i<= 5; i++){
         tags.push(result[0][i].title);
       };
-      for (var i=1; i <= Object.keys(result[1]).length && i<=3; i++){
-        tags.push(result[1][i].name);
-      };
-      console.log(tags);
       if (tags.length == 0){
         tags.push("No search results");
       };
@@ -150,26 +104,47 @@ $('#search')[0].addEventListener("keyup", function(){
 
 $('#search-button-submit')[0].addEventListener('click', searchFunction);
 
-$('#problems-choice')[0].addEventListener('click', function(){
-  $('#search-button-1')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
-  $('#category-chioce')[0].style.display = "block";
-  $('#skills-chioce')[0].style.display = "none";
-});
+var colors = ["#337ab7","#5cb85c", "#f0ad4e", "#5bc0de", "#d9534f", "#85144B", "#39CCCC", "#3D9970"];
 
-$('#people-chioce')[0].addEventListener('click', function(){
-  $('#search-button-1')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
-  $('#category-chioce')[0].style.display = "none";
-  $('#skills-chioce')[0].style.display = "block";
-})
-
-function changeButtonName(){
-  $('#search-button-2')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
+function changeColor(color, elem){
+  if (elem.className.indexOf("clicked") > -1){ // button is clicked
+    elem.className = "button";
+    elem.style.color = "black";
+  } else {
+    elem.className += " "+ color+" clicked";
+    elem.style.color = "white";
+  }
 }
 
-$('#name-chioce')[0].addEventListener('click', changeButtonName);
-$('#skills-chioce')[0].addEventListener('click', changeButtonName);
-$('#category-chioce')[0].addEventListener('click', changeButtonName);
+$('#pollution-filter')[0].addEventListener('click',function(){changeColor("button-green", this);});
+$('#poverty-filter')[0].addEventListener('click',function(){changeColor("button-red", this);});
+$('#fwp-filter')[0].addEventListener('click',function(){changeColor("button-blue", this);});
+$('#edu-filter')[0].addEventListener('click',function(){changeColor("button-orange", this);});
+$('#bn-filter')[0].addEventListener('click',function(){changeColor("button-purple", this);});
+$('#env-filter')[0].addEventListener('click',function(){changeColor("button-darkblue", this);});
+$('#hr-filter')[0].addEventListener('click',function(){changeColor("button-gray", this);});
+$('#social-filter')[0].addEventListener('click',function(){changeColor("button-pink", this);});
 
+$('#search-radio-1')[0].onchange = function(){
+  $('#search-buttons')[0].style.display = "block";
+  $('#filter-buttons')[0].style.display = "none";
+}
+$('#filter-radio-1')[0].onchange = function(){
+  $('#search-buttons')[0].style.display = "none";
+  $('#filter-buttons')[0].style.display = "block";
+}
+
+$( "#chevron-left" ).click(function() {
+  var options = {};
+  $("#search-container").toggle( "slide", options, 700 );
+  setTimeout($("#chevron-right")[0].style.display = "block", 700);
+});
+
+$( "#chevron-right" ).click(function() {
+  var options = {};
+  $("#search-container").toggle( "slide", options, 700 );
+  $("#chevron-right")[0].style.display = "none";
+});
 
 });
 
@@ -181,7 +156,7 @@ $('#category-chioce')[0].addEventListener('click', changeButtonName);
 
 {% if user and not user.is_anonymous %}
 <ul class="nav navbar-nav navbar-left">
-	<li><a href="{% url 'create_post' %}">Post a Problem</a></li>
+  <li><a href="{% url 'create_post' %}">Post a Problem</a></li>
 </ul>
 {% endif %}
 
@@ -191,44 +166,46 @@ $('#category-chioce')[0].addEventListener('click', changeButtonName);
 {% block content %}
 
 {% if not user or user.is_anonymous %}
-	<div id="social-container">
-		<div class="fb-icon-bg"></div>
-		<div class="fb-bg" onclick="location.href='{% url 'social:begin' 'facebook' %}?next={{ request.path }}'"></div>
-	</div>
+  <div id="social-container">
+    <div class="fb-icon-bg"></div>
+    <div class="fb-bg" onclick="location.href='{% url 'social:begin' 'facebook' %}?next={{ request.path }}'"></div>
+  </div>
 {% endif %}
 
-
-<!--<div class="search">
-  <input id="search" type="search" placeholder="Search">
-</div>-->
-<center>
 <div id="search-container">
-<div class="form-inline">
+<center>
+<span class="glyphicon glyphicon-chevron-left" id="chevron-left" aria-hidden="true"></span>
+<div id="search-buttons" class="form-inline">
   <div class="form-group">
     <input type="text" class="form-control" id="search" placeholder="Search">
   </div>
-  <div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="search-button-1">Problems&nbsp<span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-      <li id="problems-choice"><a href="#">Problems</a></li>
-      <li id="people-chioce"><a href="#">People</a></li>
-    </ul>
-  </div>
-  <div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="search-button-2">Name&nbsp<span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-      <li id="name-chioce"><a href="#">Name</a></li>
-      <li id="skills-chioce" style="display:none;"><a href="#">Skills</a></li>
-      <li id="category-chioce"><a href="#">Category</a></li>
-    </ul>
-  </div>
   <button type="submit" id="search-button-submit" class="btn btn-default">Search</button>
 </div>
+<div id="filter-buttons" class="form-inline" style="display:none;">
+  <div class="btn-group">
+    <button type="button" id="pollution-filter" class="button ">Pollution</button>
+    <button type="button" id="poverty-filter" class="button">Poverty</button>
+    <button type="button" id="fwp-filter" class="button">First World Problems</button>
+    <button type="button" id="edu-filter" class="button">Education</button>
+    <button type="button" id="bn-filter" class="button">Basic Necessity</button>
+    <button type="button" id="env-filter" class="button">Environment</button>
+    <button type="button" id="hr-filter" class="button">Human Rights</button> 
+    <button type="button" id="social-filter" class="button">Social</button>
+  </div>
+</div>
+<div class="switch">
+  <input type="radio" class="switch-input" name="view" value="search" id="search-radio-1" checked>
+  <label for="search-radio-1" class="switch-label switch-label-off">Search</label>
+  <input type="radio" class="switch-input" name="view" value="filter" id="filter-radio-1">
+  <label for="filter-radio-1" class="switch-label switch-label-on">Filter</label>
+  <span class="switch-selection"></span>
 </div>
 </center>
+</div>
+
+<span class="glyphicon glyphicon-chevron-right" id="chevron-right" aria-hidden="true" style="display:none"></span>
 
 <div id="earth_div"></div>
 
 {% endblock%}
+
