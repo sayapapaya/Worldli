@@ -115,7 +115,7 @@ DATABASES['default'] =  dj_database_url.config()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 
 # Allow all host headers
-ALLOWED_HOSTS = ['*', ".herokuapp.com"]
+ALLOWED_HOSTS = ['*']
 
 
 # Static files (CSS, JavaScript, Images)
@@ -131,10 +131,10 @@ MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
 
 MEDIA_URL = '/media/'
 
-#STATICFILES_DIRS = (
-#  os.path.join(PROJECT_ROOT, 'static'),
-#  os.path.join(PROJECT_ROOT, 'media'),
-#)
+STATICFILES_DIRS = (
+  os.path.join(PROJECT_ROOT, 'static'),
+  os.path.join(PROJECT_ROOT, 'media'),
+)
 
 #DATABASES = {
 #    'default': {
@@ -143,18 +143,18 @@ MEDIA_URL = '/media/'
 #    }
 #}
 
-AWS_STORAGE_BUCKET_NAME = 'worldli'
-AWS_ACCESS_KEY_ID = 'AKIAICM37IF7YNL7HAUA'
-AWS_SECRET_ACCESS_KEY = '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'
+#AWS_STORAGE_BUCKET_NAME = 'worldli'
+#AWS_ACCESS_KEY_ID = 'AKIAICM37IF7YNL7HAUA'
+#AWS_SECRET_ACCESS_KEY = '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'
 
 # Tell django-storages that when coming up with the URL for an item in S3 storage, keep
 # it simple - just use this domain plus the path. (If this isn't set, things get complicated).
 # This controls how the `static` template tag from `staticfiles` gets expanded, if you're using it.
 # We also use it in the next setting.
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+#AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
-STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+#STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-MEDIA_URL = "https://%s/media/" % AWS_S3_CUSTOM_DOMAIN
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#MEDIA_URL = "https://%s/media/" % AWS_S3_CUSTOM_DOMAIN
+#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
