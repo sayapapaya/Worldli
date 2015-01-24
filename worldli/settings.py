@@ -136,12 +136,6 @@ MEDIA_URL = '/media/'
 #  os.path.join(PROJECT_ROOT, 'media'),
 #)
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 AWS_STORAGE_BUCKET_NAME = 'worldli'
 AWS_ACCESS_KEY_ID = 'AKIAICM37IF7YNL7HAUA'
