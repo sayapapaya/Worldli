@@ -1,3 +1,4 @@
+
 {% extends "app/base.html" %}
 
 {% block script %}
@@ -20,6 +21,7 @@
 
 $(document).ready(function(){
 
+function initialize(){
 var options = {
   sky: true,
   atmosphere: true,
@@ -42,6 +44,11 @@ var toner = WE.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
 });
 toner.addTo(earth);
 
+return earth;
+};
+
+earth = initialize();
+
 var marker_dict = {};
 
 {% for problem, images in image_dict.items %}
@@ -54,7 +61,7 @@ var marker_dict = {};
   var marker2 = WE.marker([40, -70]).addTo(earth);
   marker2.bindPopup("<h3>Lack of Clean Water</h3><span 'style='font-size:8px;color:#999'><img src='http://www.nofrackingway.us/wp-content/uploads/2012/09/dirty-water.jpeg' width='100px' height='100px'><br>there is rarely an clean water in India. It kinda sucks. People drink their own urine half the time.<br /><h6> by Saya Date </h6></span>", {maxWidth: 150, closeButton: true})//.openPopup();*/
 
-
+/*earth.setView([40,-20],earth.getZoom());*/
 
 // Search bar
 function hitEnter(e){
@@ -76,6 +83,28 @@ function hitEnter(e){
     });
   }
 }
+
+function displayFilteredProblems(){
+  earth = initialize();
+  $.ajax({
+    url:"{% url 'filterProblems' %}",
+    type: "POST",
+    data:{"tags":tags},
+    success: function(result){
+      image_dict = result;
+      {% for problem, images in image_dict.items %}
+         var marker = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
+         marker_dict[{{ problem.id }}] = marker;
+          marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100%' height='auto'><a href='{% url 'view_post' problem.id %}'>Read more</a></span>",{maxWidth:150,closeButton:true})
+      {% endfor %}
+
+    },
+    error: function(xhr,errmsg,err){
+      console.log(errmsg);
+    }
+  });
+}
+
 
 function searchFunction(){
   var search_text = $('#search')[0].value;
@@ -119,6 +148,12 @@ $('#search')[0].addEventListener("keyup", function(){
         }
     }
   });
+
+ //filtering the problems by tags 
+var selectedTags = [];
+
+
+
   var search_text = $('#search')[0].value;
   $.ajax({
     url: "{% url 'search_autocomplete' %}",
@@ -181,7 +216,7 @@ $('#category-chioce')[0].addEventListener('click', changeButtonName);
 
 {% if user and not user.is_anonymous %}
 <ul class="nav navbar-nav navbar-left">
-	<li><a href="{% url 'create_post' %}">Post a Problem</a></li>
+  <li><a href="{% url 'create_post' %}">Post a Problem</a></li>
 </ul>
 {% endif %}
 
@@ -191,10 +226,10 @@ $('#category-chioce')[0].addEventListener('click', changeButtonName);
 {% block content %}
 
 {% if not user or user.is_anonymous %}
-	<div id="social-container">
-		<div class="fb-icon-bg"></div>
-		<div class="fb-bg" onclick="location.href='{% url 'social:begin' 'facebook' %}?next={{ request.path }}'"></div>
-	</div>
+  <div id="social-container">
+    <div class="fb-icon-bg"></div>
+    <div class="fb-bg" onclick="location.href='{% url 'social:begin' 'facebook' %}?next={{ request.path }}'"></div>
+  </div>
 {% endif %}
 
 

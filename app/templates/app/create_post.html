@@ -119,6 +119,31 @@ $('#next-button')[0].addEventListener('click', validateForm);
   </div>
   <input name="latitude" id="latitude" style="display:none">
   <input name="longitude" id="longitude" style="display:none">
+
+  <div class="form-group">
+    <label> what category fits your problem? </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> Pollution
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> Poverty
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> First World Problems
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4"> Basic Necessities
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio5" value="option5"> Environment
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio6" value="option6"> Human Rights
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio7" value="option7"> Social
+    </label>
+</div>
 </form>
 
 <center><button id="next-button" class="btn btn-default">Next</button></center>
@@ -142,5 +167,6 @@ $('#next-button')[0].addEventListener('click', validateForm);
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 
 {% endblock %}
