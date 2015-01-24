@@ -173,6 +173,13 @@ $( "#chevron-right" ).click(function() {
 {% endif %}
 
 <div id="search-container">
+<div class="switch">
+  <input type="radio" class="switch-input" name="view" value="search" id="search-radio-1" checked>
+  <label for="search-radio-1" class="switch-label switch-label-off">Search</label>
+  <input type="radio" class="switch-input" name="view" value="filter" id="filter-radio-1">
+  <label for="filter-radio-1" class="switch-label switch-label-on">Browse</label>
+  <span class="switch-selection"></span>
+</div>
 <center>
 <span class="glyphicon glyphicon-chevron-left" id="chevron-left" aria-hidden="true"></span>
 <div id="search-buttons" class="form-inline">
@@ -192,13 +199,6 @@ $( "#chevron-right" ).click(function() {
     <button type="button" id="hr-filter" class="button">Human Rights</button> 
     <button type="button" id="social-filter" class="button">Social</button>
   </div>
-</div>
-<div class="switch">
-  <input type="radio" class="switch-input" name="view" value="search" id="search-radio-1" checked>
-  <label for="search-radio-1" class="switch-label switch-label-off">Search</label>
-  <input type="radio" class="switch-input" name="view" value="filter" id="filter-radio-1">
-  <label for="filter-radio-1" class="switch-label switch-label-on">Filter</label>
-  <span class="switch-selection"></span>
 </div>
 </center>
 </div>

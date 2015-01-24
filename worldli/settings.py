@@ -115,7 +115,7 @@ DATABASES['default'] =  dj_database_url.config()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 
 # Allow all host headers
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', ".herokuapp.com"]
 
 
 # Static files (CSS, JavaScript, Images)
@@ -136,6 +136,12 @@ MEDIA_URL = '/media/'
 #  os.path.join(PROJECT_ROOT, 'media'),
 #)
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
 
 AWS_STORAGE_BUCKET_NAME = 'worldli'
 AWS_ACCESS_KEY_ID = 'AKIAICM37IF7YNL7HAUA'
