@@ -9,6 +9,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
 from django.core.urlresolvers import reverse
+import random
 
 def index(request):
 	social = None
@@ -130,6 +131,17 @@ def create_problem(request):
 		latitude = request.POST.get('latitude')
 		longitude = request.POST.get('longitude')
 		tags = request.POST.get('tags')
+		selectProblems = Problem.objects.filter(latitude=latitude,longitude=longitude)
+		completed = False
+		while completed==False:
+			r1 = float(random.randint(-100,100))/400.0
+			r2 = float(random.randint(-100,100))/400.0
+			if len(selectProblems)>0:
+				latitude = float(latitude)+r1
+				longitude = float(longitude)+r2
+				selectProblems= Problem.objects.filter(latitude=latitude,longitude=longitude)
+			else:
+				completed = True;
 		problem = Problem.objects.filter(user=request.user, title=title)
 		if len(problem) == 0:
 			problem = Problem(user=request.user, title=title, description=description, location=location, latitude=latitude, longitude=longitude, tags=tags)
