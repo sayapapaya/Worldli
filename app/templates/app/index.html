@@ -51,11 +51,8 @@ earth = initialize();
 
 var marker_dict = {};
 
-{% for problem, images in image_dict.items %}
-  var marker = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
-  marker_dict[{{ problem.id }}] = marker;
-  marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100%' height='auto'><a href='{% url 'view_post' problem.id %}'>Read more</a></span>",{maxWidth:150,closeButton:true})
-{% endfor %}
+
+
 
 /*
   var marker2 = WE.marker([40, -70]).addTo(earth);
@@ -84,54 +81,67 @@ function hitEnter(e){
   }
 }
 
-function displayFilteredProblems(){
-  earth = initialize();
+function displayFilteredProblems(tags){
+  markerDictLeng = Object.keys(marker_dict).length;
+  if(markerDictLeng>0){
+    for(i in marker_dict){
+      console.log(marker_dict[i]);
+      marker_dict[i].detach();
+    }
+
+  }
+  var csrftoken = getCookie('csrftoken');
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+  });
   $.ajax({
     url:"{% url 'filterProblems' %}",
     type: "POST",
     data:{"tags":tags},
     success: function(result){
-      image_dict = result;
-      {% for problem, images in image_dict.items %}
-         var marker = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
-         marker_dict[{{ problem.id }}] = marker;
-          marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100%' height='auto'><a href='{% url 'view_post' problem.id %}'>Read more</a></span>",{maxWidth:150,closeButton:true})
-      {% endfor %}
+      //console.log(result);
+      //image_dict = result;
+      console.log('Im getting the result');
+      var filteredProblems = result;
+      console.log("length");
+      var leng = Object.keys(filteredProblems).length;
+      for(var i=0;i<leng;i++){
+        problem = filteredProblems[i];
+        var marker = WE.marker([problem.latitude,problem.longitude]).addTo(earth);
+        //console.log(earth);
+        //console.log(marker)
+        marker_dict[problem.id] = marker;
+       /* marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='http://7-themes.com/data_images/out/15/6819961-scenery-wallpaper.jpg' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});*/
+       marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='"+problem.image+"' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});
 
+      }
     },
     error: function(xhr,errmsg,err){
       console.log(errmsg);
+      console.log(xhr);
+      console.log(err);
     }
   });
 }
 
 
+
 function searchFunction(){
   var search_text = $('#search')[0].value;
-  var one = $('#search-button-1')[0].innerHTML;
-  var two  = $('#search-button-2')[0].innerHTML;
-  var url;
-  if ( one.indexOf("Problems") > -1){ // the string contains "Problems"
-    if (two.indexOf("Name") > -1){
-      url = "{% url 'search'%}";
-    } else {
-    }
-  } else {
-    if (two.indexOf("Name") > -1){
-      url = "{% url 'search_people_name' %}";
-    } else {
-      url = "{% url 'search_skills' %}";
-    }
-  }
   $.ajax({
-    url: url,
+    url: "{% url 'search' %}",
     type: "POST",
     data: {"search_text": search_text},
     success: function(result) {
-      // sets the earth view at a certain latitude and longitude
-      //earth.setView([result.latitude,result.longitude],earth.getZoom());
-      //marker_dict[result.id].openPopup();
-      console.log(result);
+      if (result != "Doesn't exist"){
+        // sets the earth view at a certain latitude and longitude
+        earth.panTo([result.latitude,result.longitude],earth.getZoom());
+        marker_dict[result.id].openPopup();
+      }
     },
     error: function(xhr, errmsg, err) {
       console.log(errmsg);
@@ -149,26 +159,16 @@ $('#search')[0].addEventListener("keyup", function(){
     }
   });
 
- //filtering the problems by tags 
-var selectedTags = [];
-
-
-
   var search_text = $('#search')[0].value;
   $.ajax({
     url: "{% url 'search_autocomplete' %}",
     type: "POST",
     data: {"search_text": search_text},
     success: function(result) {
-      console.log(result);
       var tags = [];
-      for (var i=1; i <= Object.keys(result[0]).length && i<= 3; i++){
+      for (var i=1; i <= Object.keys(result[0]).length && i<= 5; i++){
         tags.push(result[0][i].title);
       };
-      for (var i=1; i <= Object.keys(result[1]).length && i<=3; i++){
-        tags.push(result[1][i].name);
-      };
-      console.log(tags);
       if (tags.length == 0){
         tags.push("No search results");
       };
@@ -183,28 +183,61 @@ var selectedTags = [];
   });
 });
 
-$('#search-button-submit')[0].addEventListener('click', searchFunction);
-
-$('#problems-choice')[0].addEventListener('click', function(){
-  $('#search-button-1')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
-  $('#category-chioce')[0].style.display = "block";
-  $('#skills-chioce')[0].style.display = "none";
-});
-
-$('#people-chioce')[0].addEventListener('click', function(){
-  $('#search-button-1')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
-  $('#category-chioce')[0].style.display = "none";
-  $('#skills-chioce')[0].style.display = "block";
-})
-
-function changeButtonName(){
-  $('#search-button-2')[0].innerHTML = this.children[0].innerHTML + "&nbsp<span class='caret'></span>";
+function filterByCategory(){
+  var selectedTags = [];
+  var clickedButtons = $('.clicked');
+  console.log(clickedButtons.length);
+  for(var i=0;i<clickedButtons.length;i++){
+  console.log(clickedButtons[i].innerHTML);
+    selectedTags.push(clickedButtons[i].innerHTML)
+  }
+  displayFilteredProblems(selectedTags);
 }
 
-$('#name-chioce')[0].addEventListener('click', changeButtonName);
-$('#skills-chioce')[0].addEventListener('click', changeButtonName);
-$('#category-chioce')[0].addEventListener('click', changeButtonName);
+$('#search-button-submit')[0].addEventListener('click', searchFunction);
 
+var colors = ["#337ab7","#5cb85c", "#f0ad4e", "#5bc0de", "#d9534f", "#85144B", "#39CCCC", "#3D9970"];
+
+function changeColor(color, elem){
+  if (elem.className.indexOf("clicked") > -1){ // button is clicked
+    elem.className = "button";
+    elem.style.color = "black";
+  } else {
+    elem.className += " "+ color+" clicked";
+    elem.style.color = "white";
+  }
+  filterByCategory();
+}
+
+$('#pollution-filter')[0].addEventListener('click',function(){changeColor("button-green", this);});
+$('#poverty-filter')[0].addEventListener('click',function(){changeColor("button-red", this);});
+$('#fwp-filter')[0].addEventListener('click',function(){changeColor("button-blue", this);});
+$('#edu-filter')[0].addEventListener('click',function(){changeColor("button-orange", this);});
+$('#bn-filter')[0].addEventListener('click',function(){changeColor("button-purple", this);});
+$('#env-filter')[0].addEventListener('click',function(){changeColor("button-darkblue", this);});
+$('#hr-filter')[0].addEventListener('click',function(){changeColor("button-gray", this);});
+$('#social-filter')[0].addEventListener('click',function(){changeColor("button-pink", this);});
+
+$('#search-radio-1')[0].onchange = function(){
+  $('#search-buttons')[0].style.display = "block";
+  $('#filter-buttons')[0].style.display = "none";
+}
+$('#filter-radio-1')[0].onchange = function(){
+  $('#search-buttons')[0].style.display = "none";
+  $('#filter-buttons')[0].style.display = "block";
+}
+
+$( "#chevron-left" ).click(function() {
+  var options = {};
+  $("#search-container").toggle( "slide", options, 700 );
+  setTimeout($("#chevron-right")[0].style.display = "block", 700);
+});
+
+$( "#chevron-right" ).click(function() {
+  var options = {};
+  $("#search-container").toggle( "slide", options, 700 );
+  $("#chevron-right")[0].style.display = "none";
+});
 
 });
 
@@ -232,38 +265,40 @@ $('#category-chioce')[0].addEventListener('click', changeButtonName);
   </div>
 {% endif %}
 
-
-<!--<div class="search">
-  <input id="search" type="search" placeholder="Search">
-</div>-->
-<center>
 <div id="search-container">
-<div class="form-inline">
+<center>
+<span class="glyphicon glyphicon-chevron-left" id="chevron-left" aria-hidden="true"></span>
+<div id="search-buttons" class="form-inline">
   <div class="form-group">
     <input type="text" class="form-control" id="search" placeholder="Search">
   </div>
-  <div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="search-button-1">Problems&nbsp<span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-      <li id="problems-choice"><a href="#">Problems</a></li>
-      <li id="people-chioce"><a href="#">People</a></li>
-    </ul>
-  </div>
-  <div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="search-button-2">Name&nbsp<span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-      <li id="name-chioce"><a href="#">Name</a></li>
-      <li id="skills-chioce" style="display:none;"><a href="#">Skills</a></li>
-      <li id="category-chioce"><a href="#">Category</a></li>
-    </ul>
-  </div>
   <button type="submit" id="search-button-submit" class="btn btn-default">Search</button>
 </div>
+<div id="filter-buttons" class="form-inline" style="display:none;">
+  <div class="btn-group">
+    <button type="button" id="pollution-filter" class="button ">Pollution</button>
+    <button type="button" id="poverty-filter" class="button">Poverty</button>
+    <button type="button" id="fwp-filter" class="button">First World Problems</button>
+    <button type="button" id="edu-filter" class="button">Education</button>
+    <button type="button" id="bn-filter" class="button">Basic Necessity</button>
+    <button type="button" id="env-filter" class="button">Environment</button>
+    <button type="button" id="hr-filter" class="button">Human Rights</button> 
+    <button type="button" id="social-filter" class="button">Social</button>
+  </div>
+</div>
+<div class="switch">
+  <input type="radio" class="switch-input" name="view" value="search" id="search-radio-1" checked>
+  <label for="search-radio-1" class="switch-label switch-label-off">Search</label>
+  <input type="radio" class="switch-input" name="view" value="filter" id="filter-radio-1">
+  <label for="filter-radio-1" class="switch-label switch-label-on">Filter</label>
+  <span class="switch-selection"></span>
 </div>
 </center>
+</div>
+
+<span class="glyphicon glyphicon-chevron-right" id="chevron-right" aria-hidden="true" style="display:none"></span>
 
 <div id="earth_div"></div>
 
 {% endblock%}
+

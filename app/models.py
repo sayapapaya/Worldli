@@ -35,7 +35,8 @@ class Problem(models.Model):
 	location = models.CharField(max_length=200, blank=False)
 	latitude = models.FloatField(default="40.7127837")
 	longitude = models.FloatField(default="-74.0059413")
-	tags = models.Field.choices=[('P','polution'),('pov','poverty'),('f','FirstWorldProblems'),('BN','BasicNecessities'),('E','Environment'),('HR','human rights'),('S','social')]        #tags = models.TextField(default = "null");
+	#CATEGORY = (('P','Pollution'),('Poverty','Poverty'),('First World Problems','First World Problems'),('Basic Necessities','Basic Necessities'),('Environment','Environment'),('Human rights','human rights'),('social','social'))
+	tags = models.CharField(max_length=100, default='Poverty')
 	def __str__(self):
 		return self.title
 
@@ -67,20 +68,20 @@ class Comment(models.Model):
 	def __str__(self):
 		return self.text
 
-class Project(models.Model):
-        founder = models.ForeignKey(User)
-        problem = models.ForeignKey(Problem)
-        upvotes = models.IntegerField()
+#class Project(models.Model):
+#        founder = models.ForeignKey(User)
+#        problem = models.ForeignKey(Problem)
+#        upvotes = models.IntegerField()
 
-        def __str__(self):
-                return self.text
+ #       def __str__(self):
+ #               return self.text
 	
-class Project_Comment(models.Model):
-        user = models.ForeignKey(User)
-        project = models.ForeignKey(Project)
-        upvotes = models.IntegerField()
-        text = models.TextField()
-
-        def __str__(self):
-                return self.text
+#class Project_Comment(models.Model):
+ #       user = models.ForeignKey(User)
+  #      project = models.ForeignKey(Project)
+   #     upvotes = models.IntegerField()
+    #    text = models.TextField()
+#
+ #       def __str__(self):
+  #              return self.text
 
