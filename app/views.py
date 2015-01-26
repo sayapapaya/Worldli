@@ -96,7 +96,7 @@ def my_post(request):
 	image_dict = {}
 	for problem in problems:
 		images = ProblemImage.objects.filter(problem=problem)
-		image_dict[problem.id] = images
+		image_dict[problem] = images
 	context = RequestContext(request, {"social":social, "problems": problems, "image_dict":image_dict})
 	return render_to_response("app/my_post.html", context_instance=context)
 
@@ -125,9 +125,10 @@ def create_problem(request):
 		location = request.POST.get('location')
 		latitude = request.POST.get('latitude')
 		longitude = request.POST.get('longitude')
+		tags = request.POST.get('tags')
 		problem = Problem.objects.filter(user=request.user, title=title)
 		if len(problem) == 0:
-			problem = Problem(user=request.user, title=title, description=description, location=location, latitude=latitude, longitude=longitude)
+			problem = Problem(user=request.user, title=title, description=description, location=location, latitude=latitude, longitude=longitude, tags=tags)
 			try:
 				problem.save()
 			except Exception, e:
@@ -139,6 +140,7 @@ def create_problem(request):
 			problem[0].location = location
 			problem[0].latitude = latitude
 			problem[0].longitude = longitude
+			problem[0].tags = tags
 			try:
 				problem[0].save()
 				problem = problem[0]

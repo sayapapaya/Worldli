@@ -71,6 +71,7 @@ function validateForm(){
   var title = $('[name="title"')[0].value;
   var description = $('[name="description"')[0].value;
   var location = $('[name="location"]')[0].value;
+  var tags = $('[name="tags"]')[0].value;
   if (title == "" || description == "" || location == "") {
     $('#form-error')[0].innerHTML = "One or more of the fields are blank";
     $('#form-error')[0].style.display = "block";
@@ -123,25 +124,25 @@ $('#next-button')[0].addEventListener('click', validateForm);
   <div class="form-group">
     <label> what category fits your problem? </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> Pollution
+      <input type="radio" name="tags" id="inlineRadio" value="Pollution"> Pollution
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> Poverty
+      <input type="radio" name="tags" id="inlineRadio" value="Poverty"> Poverty
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> First World Problems
+      <input type="radio" name="tags" id="inlineRadio" value="First World Problems"> First World Problems
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4"> Basic Necessities
+      <input type="radio" name="tags" id="inlineRadio" value="Basic Necessities"> Basic Necessities
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio5" value="option5"> Environment
+      <input type="radio" name="tags" id="inlineRadio" value="Environment"> Environment
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio6" value="option6"> Human Rights
+      <input type="radio" name="tags" id="inlineRadio" value="Human Rights"> Human Rights
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio7" value="option7"> Social
+      <input type="radio" name="tags" id="inlineRadio" value="Social"> Social
     </label>
 </div>
 </form>
