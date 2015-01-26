@@ -37,6 +37,10 @@ class Problem(models.Model):
 	def __str__(self):
 		return self.title
 
+class Follower(models.Model):
+	user = models.ForeignKey(User)
+	problem = models.ForeignKey(Problem)
+
 class ProblemImage(models.Model):
 	image = models.ImageField(upload_to="img/", null=True, blank=True)
 	problem = models.ForeignKey(Problem)
@@ -56,11 +60,16 @@ class Solution(models.Model):
 		return self.text
 
 class Comment(models.Model):
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(User, null=True)
 	problem = models.ForeignKey(Problem)
 	followup = models.ForeignKey('self', default=0, null=True, blank=True)
-	upvotes = models.IntegerField()
 	text = models.TextField()
 
 	def __str__(self):
 		return self.text
+
+class Upvote(models.Model):
+	user = models.ForeignKey(User, null=True)
+	problem = models.ForeignKey(Problem, null=True, blank=True)
+	comment = models.ForeignKey(Comment, null=True, blank=True)
+	

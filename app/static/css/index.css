@@ -308,7 +308,7 @@ a:hover {
 	cursor: pointer;
 }
 #profile-image{
-	margin:10px;
+	margin:15%;
 	float:left;
 }
 #profile-form-container{
@@ -316,6 +316,7 @@ a:hover {
 	width:400px;
 	float:left;
 	padding:20px;
+  margin-left:20px;
 }
 .hidden{
     display:none;
@@ -383,7 +384,6 @@ a:hover {
   font-size: 1.5em;
   color: #ffd70f;
   cursor:pointer;
-  margin-top:40px;
 }
 .button {
   position: relative;

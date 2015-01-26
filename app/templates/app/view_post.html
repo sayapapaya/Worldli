@@ -16,6 +16,7 @@ body{
 <script>
 $(document).ready(function() {
 
+{% if images %}
 $('#image-radio')[0].onchange = function() {
 	$('#carousel-problem')[0].style.display="block";
 	$('#map-canvas')[0].innerHTML = "";
@@ -27,6 +28,7 @@ $('#map-radio')[0].onchange =  function() {
 	$('#map-canvas')[0].style.display = "block";
 	initialize();
 }
+{% endif %}
 
 function initialize() {
 	var mapOptions = {
@@ -36,11 +38,150 @@ function initialize() {
 	var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 }
 
-for (var i=0; i<$('.reply-button').length; i++){
-  $('.reply-button')[i].addEventListener('click', function(){
-
+function csrf(){
+  var csrftoken = getCookie('csrftoken');
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
   });
 }
+
+function create_follower() {
+  csrf();
+  $.ajax({
+    url: "{% url 'create_follower' problem.id %}",
+    type: "POST",
+    success: function(result) {
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+      console.log(xhr);
+    }
+  })
+}
+
+function delete_follower() {
+  csrf();
+  $.ajax({
+    url: "{% url 'delete_follower' problem.id %}",
+    type: "POST",
+    success: function(result) {
+      console.log(result);
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+    }
+  })
+}
+
+function problem_upvote() {
+  csrf();
+  $.ajax({
+    url: "{% url 'problem_upvote' problem.id %}",
+    type: "POST",
+    success: function(result) {
+      $('#vote')[0].innerHTML = result;
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+    }
+  })
+}
+
+function problem_downvote() {
+  csrf();
+  $.ajax({
+    url: "{% url 'problem_downvote' problem.id %}",
+    type: "POST",
+    success: function(result) {
+      $('#vote')[0].innerHTML = result;
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+    }
+  });
+}
+
+function comment_upvote(comment_id) {
+  csrf();
+  $.ajax({
+    url: "/comment_upvote/"+comment_id,
+    type: "POST",
+    success: function(result) {
+      $('#comment-button-'+comment_id)[0].innerHTML = result;
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+    }
+  });
+}
+
+function comment_downvote(comment_id) {
+  csrf();
+  $.ajax({
+    url: "/comment_downvote/"+comment_id,
+    type: "POST",
+    success: function(result) {
+      $('#comment-button-'+comment_id)[0].innerHTML = result;
+    },
+    error: function(xhr, errmsg, err) {
+      console.log(errmsg);
+    }
+  });
+}
+
+$('#follow-button')[0].addEventListener('click', function(){
+  if ($('#follow-button')[0].className.indexOf("btn-primary")>-1){
+    $('#follow-button')[0].className = "btn btn-sm";
+    $('#follow-button')[0].innerHTML = "unfollow";
+    create_follower();
+  } else {
+    $('#follow-button')[0].className = "btn btn-sm btn-primary";
+    $('#follow-button')[0].innerHTML = "follow problem";
+    delete_follower();
+  }
+});
+
+$('#upvote-button')[0].addEventListener('click', function(){
+  if ($('#upvote-button')[0].className.indexOf("btn-danger")>-1){
+    $('#upvote-button')[0].className = "btn btn-sm";
+    problem_upvote();
+  } else {
+    $('#upvote-button')[0].className = "btn btn-sm btn-danger";
+    problem_downvote();
+  }
+});
+
+var instantiateTextbox = function () {
+  textboxio.replaceAll('textarea', {
+    paste_styles: {
+      office: 'clean'
+    }
+  });
+};
+
+var getEditorContent = function(){
+    var editors = textboxio.get('#textbox');
+    var editor = editors[0];
+    return editor.content.get();
+};
+
+instantiateTextbox();
+
+$('.comment-btn').click(function(){
+  var $this = $(this);
+  var comment_id = this.id;
+  if (this.className.indexOf("btn-danger")>-1){
+    this.className = "comment-btn btn btn-sm btn-default";
+    comment_upvote(comment_id);
+  } else {
+    this.className = "comment-btn btn btn-sm btn-danger";
+    comment_downvote(comment_id);
+  }
+})
 
 });
 </script>
@@ -88,10 +229,7 @@ for (var i=0; i<$('.reply-button').length; i++){
     <span class="sr-only">Next</span>
   </a>
 </div>
-{% endif %}
-
 <div id="map-canvas" style="display:none"></div>
-
 <div class="switch">
   <input type="radio" class="switch-input" name="view" value="week" id="image-radio" checked>
   <label for="image-radio" class="switch-label switch-label-off">Image</label>
@@ -99,27 +237,49 @@ for (var i=0; i<$('.reply-button').length; i++){
   <label for="map-radio" class="switch-label switch-label-on">Map</label>
   <span class="switch-selection"></span>
 </div>
+{% endif %}
 
 <center><h2>{{ problem.title }}</h2></center>
 
-<div id="problem-content">
-<p>{{ problem.description }}</p>
+<div id="problem-content" style="text-align:justify;">
+<p >{{ problem.description|linebreaks }}</p>
 </div>
 
-<center><h3>Comments</h3></center>
-<div style="margin-left:15%;border-top:">
-{% for comment, social in comment_users.items %}
+<div class="btn-group" role="group" style="left:15%;">
+<div style="display:inline-block;float:left;margin-right:10px;">
+{% if problem_upvote %}
+<button id="upvote-button" style="float:left"class="btn btn-sm">upvote 
+<span style="color:gray;">|&nbsp</span><p id="vote" style="display:inline;">{{ number_of_problem_upvotes }}</p>
+{% else %}
+<button id="upvote-button" style="float:left"class="btn btn-sm btn-danger">upvote 
+<span style="color:gray;">|&nbsp</span><p id="vote" style="display:inline;">{{ number_of_problem_upvotes }}</p>
+{% endif %}
+</button></div>
+{% if follower %}
+<button id="follow-button" class="btn btn-sm" style="float:left;display:inline-block">follow problem</button>
+{% else %}
+<button id="follow-button" class="btn btn-sm btn-primary" style="float:left;display:inline-block">follow problem</button>
+{% endif %}
+</div>
+
+</br></br>
+
+<div style="margin-left:15%;">
+{% for comment, data in comment_users.items %}
 <div class="comment">
   <div>
-    <img class="avatar" src="https://graph.facebook.com/{{ social.uid }}/picture?small">
+    <img class="avatar" src="https://graph.facebook.com/{{ data.user.uid }}/picture?small">
     <p class="comment-name"><strong>{{ comment.user.first_name }}&nbsp{{ comment.user.last_name }}</strong></p>
     <p>{{ comment.upvotes }} upvotes</p>
   </div></br>
-  <div style="margin-right:15%;text-align:justify;"><p>{{ comment.text }}</p></div>
-  {% if comment.user != user %}
-    <a type="button" class="btn btn-sm btn-default">upvote</a>
+  <div style="margin-right:15%;text-align:justify;">{{ comment.text|safe }}</div>
+  {% if data.voted %}
+  <button type="button" id="{{ comment.id }}" class="comment-btn btn btn-sm">upvote | <span id="comment-button-{{ comment.id }}">{{ data.upvote }}</span></button>
   {% else %}
-    <a type="button" class="btn btn-sm btn-default" disabled="disabled">upvote</a>
+   <button type="button" id="{{ comment.id }}" class="comment-btn btn btn-sm btn-danger">upvote | <span id="comment-button-{{ comment.id }}">{{ data.upvote }}</span></button>
+  {% endif %}
+
+  {% if comment.user == user %}
     <a type="button" id="remove-comment-button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#{{ comment.id }}">remove</a>
   {% endif %}
 </div>
@@ -134,7 +294,7 @@ for (var i=0; i<$('.reply-button').length; i++){
         <h4 class="modal-title" id="myModalLabel">Are you sure that you want to remove the comment?</h4>
       </div>
       <div class="modal-body">
-        <p>{{ comment.text }}</p>
+        <p>{{ comment.text|safe }}</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" onclick="location.href='{% url 'delete_comment' comment.id %}?problem_id= {{ problem.id }}'">Yes</button>
@@ -150,10 +310,10 @@ for (var i=0; i<$('.reply-button').length; i++){
 <form class="comment-form" action="{% url 'create_comment' problem.id %}" method="post">
   {% csrf_token %}
   <div class="form-group">
-    <label><h4>Leave a comment</h4></label>
-    <textarea class="comment-box" name="text" class="form-control"></textarea>
+    <label><h3>Solve the problem!</h3></label>
+    <textarea id="textbox" class="comment-box" name="text" class="form-control"></textarea>
   </div>
-  <button class="btn btn-default">Submit</button>
+  <button id="solution-button" class="btn btn-default">offer solution</button>
 </form>
 
 </div>

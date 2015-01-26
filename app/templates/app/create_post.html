@@ -82,6 +82,15 @@ function validateForm(){
 $('#location')[0].addEventListener('keyup', getAutoComplete);
 $('#next-button')[0].addEventListener('click', validateForm);
 
+var instantiateTextbox = function () {
+  textboxio.replaceAll('textarea', {
+    paste_styles: {
+      office: 'clean'
+    }
+  });
+};
+
+instantiateTextbox();
 
 });
 </script>
@@ -111,7 +120,7 @@ $('#next-button')[0].addEventListener('click', validateForm);
   </div>
   <div class="form-group">
     <label>Explain in more detail</label>
-    <textarea name="description" class="form-control" rows="5"></textarea>
+    <textarea name="description" class="form-control" rows="10"></textarea>
   </div>
   <div class="form-group">
     <label for="location">Where is the problem found?</label>

@@ -1,13 +1,14 @@
 from django.template.context import RequestContext
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 from django.core.exceptions import ValidationError
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from .forms import UploadImageForm
 from app.models import *
 import requests
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
+from django.core.urlresolvers import reverse
 
 def index(request):
 	social = None
@@ -108,10 +109,13 @@ def view_post(request, problem_id):
 	problem = Problem.objects.get(id=problem_id)
 	images = ProblemImage.objects.filter(problem=problem)
 	comments = Comment.objects.filter(problem=problem)
+	follower = Follower.objects.filter(problem=problem, user=request.user)
 	comment_users = {}
 	for comment in comments:
-		comment_users[comment] = comment.user.social_auth.get(provider="facebook")
-	context = RequestContext(request, {"user": request.user, "social":social, "problem": problem, "images":images, "comments":comments, "comment_users":comment_users})
+		comment_users[comment] = {"user":comment.user.social_auth.get(provider="facebook"), "upvote":len(Upvote.objects.filter(comment=comment)), "voted": Upvote.objects.filter(comment=comment,user=request.user)}
+	problem_upvote = Upvote.objects.filter(problem=problem, user=request.user)
+	number_of_problem_upvotes = len(Upvote.objects.filter(problem=problem))
+	context = RequestContext(request, {"user": request.user, "social":social, "problem": problem, "images":images, "comments":comments, "comment_users":comment_users, "follower":follower, "problem_upvote": problem_upvote, "number_of_problem_upvotes":number_of_problem_upvotes})
 	return render_to_response("app/view_post.html", context_instance=context)
 
 def create_problem(request):
@@ -174,7 +178,7 @@ def edit_problem(request, problem_id):
 def delete_problem(request, problem_id):
 	problem = Problem.objects.get(id=problem_id)
 	problem.delete()
-	return my_post(request)
+	return HttpResponseRedirect(reverse('my_post'))
 
 def upload_images(request, problem_id):
 	if request.method == "POST":
@@ -272,15 +276,53 @@ def create_comment(request, problem_id):
 		try: 
 			followup_id = request.POST.get('comment_id');
 			followup = Comment.objects.get(id=followup_id)
-			comment = Comment(user=request.user, problem=Problem.objects.get(id=problem_id), upvotes=0, followup=followup, text=text)
+			comment = Comment(user=request.user, problem=Problem.objects.get(id=problem_id), followup=followup, text=text)
 			comment.save()
 		except:
-			comment = Comment(user=request.user, problem=Problem.objects.get(id=problem_id), upvotes=0, text=text)
+			comment = Comment(user=request.user, problem=Problem.objects.get(id=problem_id), text=text)
 			comment.save()
-		return view_post(request, problem_id)
+	return HttpResponseRedirect(reverse('view_post', kwargs={"problem_id":int(problem_id)}))
 
 def delete_comment(request, comment_id):
 	comment = Comment.objects.get(id=comment_id)
 	comment.delete()
 	problem_id = request.GET['problem_id']
-	return view_post(request, problem_id)
+	return HttpResponseRedirect(reverse('view_post', kwargs={"problem_id":int(problem_id)}))
+
+def create_follower(request, problem_id):
+	follower = Follower(problem=Problem.objects.get(id=problem_id),user=request.user)
+	follower.save()
+	return HttpResponse("success")
+
+def delete_follower(request, problem_id):
+	follower = Follower.objects.get(problem=Problem.objects.get(id=problem_id), user=request.user)
+	follower.delete()
+	return HttpResponse("success")
+
+def problem_upvote(request, problem_id):
+	problem = Problem.objects.get(id=problem_id)
+	upvote = Upvote(problem=problem, user=request.user)
+	upvote.save()
+	upvotes = Upvote.objects.filter(problem=problem)
+	return HttpResponse(len(upvotes))
+
+def problem_downvote(request, problem_id):
+	problem = Problem.objects.get(id=problem_id)
+	upvote = Upvote.objects.filter(problem=problem, user=request.user)
+	upvote.delete()
+	upvotes = Upvote.objects.filter(problem=problem)
+	return HttpResponse(len(upvotes))
+
+def comment_upvote(request, comment_id):
+	comment = Comment.objects.get(id=comment_id)
+	upvote = Upvote(comment=comment, user=request.user)
+	upvote.save()
+	upvotes = Upvote.objects.filter(comment=comment)
+	return HttpResponse(len(upvotes))
+
+def comment_downvote(request, comment_id):
+	comment = Comment.objects.get(id=comment_id)
+	upvote = Upvote.objects.filter(comment=comment, user=request.user)
+	upvote.delete()
+	upvotes = Upvote.objects.filter(comment=comment)
+	return HttpResponse(len(upvotes))

@@ -32,6 +32,12 @@ urlpatterns = patterns('',
     url(r'^search_skills/', views.search_skills, name="search_skills"),
     url(r'^create_comment/(?P<problem_id>\d+)$', views.create_comment, name="create_comment"),
     url(r'^delete_comment/(?P<comment_id>\d+)$', views.delete_comment, name="delete_comment"),
+    url(r'^create_follower/(?P<problem_id>\d+)$', views.create_follower, name="create_follower"),
+    url(r'^delete_follower/(?P<problem_id>\d+)$', views.delete_follower, name="delete_follower"),
+    url(r'^problem_upvote/(?P<problem_id>\d+)$', views.problem_upvote, name="problem_upvote"),
+    url(r'^problem_downvote/(?P<problem_id>\d+)$', views.problem_downvote, name="problem_downvote"),
+    url(r'^comment_upvote/(?P<comment_id>\d+)$', views.comment_upvote, name="comment_upvote"),
+    url(r'^comment_downvote/(?P<comment_id>\d+)$', views.comment_downvote, name="comment_downvote"),
 )
 
 urlpatterns += patterns('',
