@@ -129,11 +129,10 @@ def create_problem(request):
 		location = request.POST.get('location')
 		latitude = request.POST.get('latitude')
 		longitude = request.POST.get('longitude')
-		tags = request.POST.get('inlineRadioOptions')
-		print tags
+		tags = request.POST.get('tags')
 		problem = Problem.objects.filter(user=request.user, title=title)
 		if len(problem) == 0:
-			problem = Problem(user=request.user, title=title, description=description, location=location, latitude=latitude, longitude=longitude)
+			problem = Problem(user=request.user, title=title, description=description, location=location, latitude=latitude, longitude=longitude, tags=tags)
 			try:
 				problem.save()
 			except Exception, e:
@@ -145,6 +144,7 @@ def create_problem(request):
 			problem[0].location = location
 			problem[0].latitude = latitude
 			problem[0].longitude = longitude
+			problem[0].tags = tags
 			try:
 				problem[0].save()
 				problem = problem[0]
@@ -342,7 +342,7 @@ def filterProblems(request):
 			url = 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSeorgZD9j5kKDFuH5bBk-jbUp9hJbyNTPG-mUPxD59jZrG0UsuxjITva_k'
 		else:
 			url =images[0].image.url
-		results[filteredProblems[i].id] = {"title": filteredProblems[i].title, "latitude": filteredProblems[i].latitude, "longitude": filteredProblems[i].longitude,"picture":url}
+		results[filteredProblems[i].id] = {"id":filteredProblems[i].id,"title": filteredProblems[i].title, "latitude": filteredProblems[i].latitude, "longitude": filteredProblems[i].longitude,"picture":url}
 		print results
 	data = json.dumps(results)
 	return HttpResponse(data, "application/json")
