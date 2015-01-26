@@ -298,7 +298,7 @@ def filterProblems(request):
 			url = 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSeorgZD9j5kKDFuH5bBk-jbUp9hJbyNTPG-mUPxD59jZrG0UsuxjITva_k'
 		else:
 			url =images[0].image.url
-		results[filteredProblems[i].id] = {"title": filteredProblems[i].title, "latitude": filteredProblems[i].latitude, "longitude": filteredProblems[i].longitude,"picture":url}
+		results[filteredProblems[i].id] = {"id":filteredProblems[i].id,"title": filteredProblems[i].title, "latitude": filteredProblems[i].latitude, "longitude": filteredProblems[i].longitude,"picture":url}
 		print results
 	data = json.dumps(results)
 	return HttpResponse(data, "application/json")

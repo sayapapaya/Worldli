@@ -102,7 +102,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 SOCIAL_AUTH_FACEBOOK_KEY = "926754177344550"
-SOCIAL_AUTH_FACEBOOK_SECRET = "282814a03003d94f7a4e75281107beb7"
+SOCIAL_AUTH_FACEBOOK_SECRET = "152b1113843d421e3e5119c8d8162f1"
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_friends']
 
@@ -143,9 +143,7 @@ DATABASES = {
     }
 }
 
-#AWS_STORAGE_BUCKET_NAME = 'worldli'
-#AWS_ACCESS_KEY_ID = 'AKIAICM37IF7YNL7HAUA'
-#AWS_SECRET_ACCESS_KEY = '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'
+
 
 # Tell django-storages that when coming up with the URL for an item in S3 storage, keep
 # it simple - just use this domain plus the path. (If this isn't set, things get complicated).
