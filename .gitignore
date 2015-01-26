@@ -8,5 +8,4 @@ worldli/media/*
 app/migrations/*
 worldli/*.pyc
 app/*.pyc
-
-
+worldli/settings.py

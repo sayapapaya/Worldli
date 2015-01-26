@@ -109,8 +109,9 @@ function displayFilteredProblems(tags){
           problem = filteredProblems[j];
           if(j in marker_dict2){
             console.log("this was previously deleted");
+            
             var newMarker = WE.marker([problem.latitude,problem.longitude]).addTo(earth);
-            newMarker.bindPopup("<center><h3>"+problem.title+"</h3></center><span 'style='font-size:8px;color:#999'><img src='"+problem.picture+"' width='100%' height='auto'><a href='/view_post/'>Read more</a></span>",{maxWidth:150,closeButton:true})
+            newMarker.bindPopup("<center><h3>"+problem.title+"</h3></center><span 'style='font-size:8px;color:#999'><img src='"+problem.picture+"' width='100%' height='auto'><a href=/post/"+problem.id+">Read more</a></span></span></span>",{maxWidth:150,closeButton:true})
             marker_dict[j] = newMarker;
             delete marker_dict2[j];
           }

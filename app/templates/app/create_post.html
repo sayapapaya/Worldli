@@ -72,12 +72,8 @@ function validateForm(){
   var title = $('[name="title"')[0].value;
   var description = getEditorContent();
   var location = $('[name="location"]')[0].value;
-  var category = $('input[type="radio"]:checked');
-  console.log(title);
-  console.log(description);
-  console.log(location);
-  console.log(category);
-  if (title == "" || description == "" || location == "" || category.size() != 1) {
+  var tags = $('[name="tags"]')[0].value;
+  if (title == "" || description == "" || location == "" || tags == "") {
     $('#form-error')[0].innerHTML = "One or more of the fields are blank";
     $('#form-error')[0].style.display = "block";
   } else {
@@ -145,25 +141,25 @@ instantiateTextbox();
     <label> What category fits your problem? </label>
     </br>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="pollution"> Pollution
+      <input type="radio" name="tags" id="inlineRadio" value="Pollution"> Pollution
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="poverty"> Poverty
+      <input type="radio" name="tags" id="inlineRadio" value="Poverty"> Poverty
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="fwp"> First World Problems
+      <input type="radio" name="tags" id="inlineRadio" value="First World Problems"> First World Problems
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio4" value="bn"> Basic Necessities
+      <input type="radio" name="tags" id="inlineRadio" value="Basic Necessities"> Basic Necessities
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio5" value="environment"> Environment
+      <input type="radio" name="tags" id="inlineRadio" value="Environment"> Environment
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio6" value="human rights"> Human Rights
+      <input type="radio" name="tags" id="inlineRadio" value="Human Rights"> Human Rights
     </label>
     <label class="radio-inline">
-      <input type="radio" name="inlineRadioOptions" id="inlineRadio7" value="social"> Social
+      <input type="radio" name="tags" id="inlineRadio" value="Social"> Social
     </label>
 </div>
 </form>
