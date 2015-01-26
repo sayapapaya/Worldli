@@ -50,15 +50,14 @@ return earth;
 
 
 earth = initialize();
-
+var marker_dict2 = {};
 var marker_dict = {};
 
 {% for problem, images in image_dict.items %}
   var marker = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
   marker_dict[{{ problem.id }}] = marker;
-  marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img class='image' src='{{ images.0.image.url }}'>");
+  marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100%' height='auto'><a href='{% url 'view_post' problem.id %}'>Read more</a></span>",{maxWidth:150,closeButton:true})
 {% endfor %}
-
 
 // Search bar
 function hitEnter(e){
@@ -83,13 +82,13 @@ function hitEnter(e){
 
 function displayFilteredProblems(tags){
   markerDictLeng = Object.keys(marker_dict).length;
-  if(markerDictLeng>0){
-    for(i in marker_dict){
-      console.log(marker_dict[i]);
-      marker_dict[i].detach();
-    }
+  //if(markerDictLeng>0){
+    //for(i in marker_dict){
+      //console.log(marker_dict[i]);
+      //marker_dict[i].detach();
+    //}
 
-  }
+  //}
   var csrftoken = getCookie('csrftoken');
   $.ajaxSetup({
     beforeSend: function(xhr, settings) {
@@ -103,18 +102,23 @@ function displayFilteredProblems(tags){
     type: "POST",
     data:{"tags":tags},
     success: function(result){
-
       var filteredProblems = result;
-      console.log("length");
       var leng = Object.keys(filteredProblems).length;
-      for(var i=0;i<leng;i++){
-        problem = filteredProblems[i];
-        var marker = WE.marker([problem.latitude,problem.longitude]).addTo(earth);
-
-        marker_dict[problem.id] = marker;
-       /* marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='http://7-themes.com/data_images/out/15/6819961-scenery-wallpaper.jpg' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});*/
-       marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='"+problem.image+"' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});
-
+      for(j in marker_dict){
+        if(j in filteredProblems){
+          problem = filteredProblems[j];
+          if(j in marker_dict2){
+            console.log("this was previously deleted");
+            var newMarker = WE.marker([problem.latitude,problem.longitude]).addTo(earth);
+            newMarker.bindPopup("<center><h3>"+problem.title+"</h3></center><span 'style='font-size:8px;color:#999'><img src='"+problem.picture+"' width='100%' height='auto'><a href='/view_post/'>Read more</a></span>",{maxWidth:150,closeButton:true})
+            marker_dict[j] = newMarker;
+            delete marker_dict2[j];
+          }
+        }
+        else{
+          marker_dict[j].detach();
+          marker_dict2[j]=marker_dict[j];
+        }
       }
     },
     error: function(xhr,errmsg,err){
