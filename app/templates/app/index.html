@@ -48,8 +48,14 @@ return earth;
 };
 
 earth = initialize();
-
+var marker_dict2 = {};
 var marker_dict = {};
+
+{% for problem, images in image_dict.items %}
+  var marker = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
+  marker_dict[{{ problem.id }}] = marker;
+  marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true})
+{% endfor %}
 
 
 
@@ -83,13 +89,13 @@ function hitEnter(e){
 
 function displayFilteredProblems(tags){
   markerDictLeng = Object.keys(marker_dict).length;
-  if(markerDictLeng>0){
-    for(i in marker_dict){
-      console.log(marker_dict[i]);
-      marker_dict[i].detach();
-    }
+  //if(markerDictLeng>0){
+    //for(i in marker_dict){
+      //console.log(marker_dict[i]);
+      //marker_dict[i].detach();
+    //}
 
-  }
+  //}
   var csrftoken = getCookie('csrftoken');
   $.ajaxSetup({
     beforeSend: function(xhr, settings) {
@@ -104,21 +110,43 @@ function displayFilteredProblems(tags){
     data:{"tags":tags},
     success: function(result){
       //console.log(result);
-      //image_dict = result;
-      console.log('Im getting the result');
+      //image_dict = result; 
       var filteredProblems = result;
-      console.log("length");
+      console.log(filteredProblems);
       var leng = Object.keys(filteredProblems).length;
-      for(var i=0;i<leng;i++){
+      for(j in marker_dict){
+        console.log(j);
+        if(j in filteredProblems){
+          problem = filteredProblems[j];
+          console.log("yay it exists");
+          if(j in marker_dict2){
+            console.log("this was previously deleted");
+            var newMarker = WE.marker([problem.latitude,problem.longitude]).addTo(earth);
+            newMarker.bindPopup("<center><h3>"+problem.title+"</h3></center><span 'style='font-size:8px;color:#999'><img src='"+problem.picture+"' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true})
+            marker_dict[j] = newMarker;
+            delete marker_dict2[j];
+          }
+
+        }
+        else{
+          console.log("detaching");
+          marker_dict[j].detach();
+          marker_dict2[j]=marker_dict[j];
+        }
+      }
+
+
+     /* for(var i=0;i<leng;i++){
         problem = filteredProblems[i];
+
         var marker = WE.marker([problem.latitude,problem.longitude]).addTo(earth);
         //console.log(earth);
         //console.log(marker)
         marker_dict[problem.id] = marker;
-       /* marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='http://7-themes.com/data_images/out/15/6819961-scenery-wallpaper.jpg' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});*/
+       /* marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='http://7-themes.com/data_images/out/15/6819961-scenery-wallpaper.jpg' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});
        marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='"+problem.image+"' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});
 
-      }
+      }*/
     },
     error: function(xhr,errmsg,err){
       console.log(errmsg);
