@@ -28,6 +28,7 @@ function saveLatlgn(){
       var lng = result["results"][0]["geometry"]["location"]["lng"];
       $('#latitude')[0].value = lat;
       $('#longitude')[0].value = lng;
+      $('#textbox')[0].innerHTML = getEditorContent();
       $('#problem-form')[0].submit();
     },
     error: function(xhr, errmsg, err) {
@@ -69,9 +70,14 @@ function getAutoComplete(){
 
 function validateForm(){
   var title = $('[name="title"')[0].value;
-  var description = $('[name="description"')[0].value;
+  var description = getEditorContent();
   var location = $('[name="location"]')[0].value;
-  if (title == "" || description == "" || location == "") {
+  var category = $('input[type="radio"]:checked');
+  console.log(title);
+  console.log(description);
+  console.log(location);
+  console.log(category);
+  if (title == "" || description == "" || location == "" || category.size() != 1) {
     $('#form-error')[0].innerHTML = "One or more of the fields are blank";
     $('#form-error')[0].style.display = "block";
   } else {
@@ -88,6 +94,12 @@ var instantiateTextbox = function () {
       office: 'clean'
     }
   });
+};
+
+var getEditorContent = function(){
+    var editors = textboxio.get('#textbox');
+    var editor = editors[0];
+    return editor.content.get();
 };
 
 instantiateTextbox();
@@ -120,7 +132,7 @@ instantiateTextbox();
   </div>
   <div class="form-group">
     <label>Explain in more detail</label>
-    <textarea name="description" class="form-control" rows="10"></textarea>
+    <textarea id="textbox" name="description" class="form-control" rows="10"></textarea>
   </div>
   <div class="form-group">
     <label for="location">Where is the problem found?</label>
@@ -128,6 +140,32 @@ instantiateTextbox();
   </div>
   <input name="latitude" id="latitude" style="display:none">
   <input name="longitude" id="longitude" style="display:none">
+
+  <div class="form-group">
+    <label> What category fits your problem? </label>
+    </br>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="pollution"> Pollution
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="poverty"> Poverty
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="fwp"> First World Problems
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio4" value="bn"> Basic Necessities
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio5" value="environment"> Environment
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio6" value="human rights"> Human Rights
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="inlineRadioOptions" id="inlineRadio7" value="social"> Social
+    </label>
+</div>
 </form>
 
 <center><button id="next-button" class="btn btn-default">Next</button></center>
@@ -151,5 +189,6 @@ instantiateTextbox();
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 
 {% endblock %}

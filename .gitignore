@@ -5,3 +5,8 @@ db.sqlite3
 env/*
 app/media/*
 worldli/media/*
+app/migrations/*
+worldli/*.pyc
+app/*.pyc
+
+

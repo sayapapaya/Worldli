@@ -242,17 +242,17 @@ $('.comment-btn').click(function(){
 <center><h2>{{ problem.title }}</h2></center>
 
 <div id="problem-content" style="text-align:justify;">
-<p >{{ problem.description|linebreaks }}</p>
+<p >{{ problem.description|safe|linebreaks }}</p>
 </div>
 
 <div class="btn-group" role="group" style="left:15%;">
 <div style="display:inline-block;float:left;margin-right:10px;">
 {% if problem_upvote %}
 <button id="upvote-button" style="float:left"class="btn btn-sm">upvote 
-<span style="color:gray;">|&nbsp</span><p id="vote" style="display:inline;">{{ number_of_problem_upvotes }}</p>
+<span>|&nbsp</span><p id="vote" style="display:inline;">{{ number_of_problem_upvotes }}</p>
 {% else %}
 <button id="upvote-button" style="float:left"class="btn btn-sm btn-danger">upvote 
-<span style="color:gray;">|&nbsp</span><p id="vote" style="display:inline;">{{ number_of_problem_upvotes }}</p>
+<span>|&nbsp</span><p id="vote" style="display:inline;">{{ number_of_problem_upvotes }}</p>
 {% endif %}
 </button></div>
 {% if follower %}
@@ -317,4 +317,6 @@ $('.comment-btn').click(function(){
 </form>
 
 </div>
+
+
 {% endblock %}

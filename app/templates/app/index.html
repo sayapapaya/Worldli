@@ -1,3 +1,4 @@
+
 {% extends "app/base.html" %}
 
 {% block script %}
@@ -22,7 +23,7 @@ $(document).ready(function(){
 
 var API_KEY = "AIzaSyD-oVtT-NbHwFJDJkjKbbe-I4llMFBbXtg";
 
-
+function initialize() {
 var options = {
   sky: true,
   atmosphere: true,
@@ -44,14 +45,83 @@ var toner = WE.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
   opacity: 0.6
 });
 toner.addTo(earth);
+return earth;
+}
+
+
+earth = initialize();
 
 var marker_dict = {};
 
 {% for problem, images in image_dict.items %}
   var marker = WE.marker([{{problem.latitude}},{{problem.longitude}}]).addTo(earth);
   marker_dict[{{ problem.id }}] = marker;
-  marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='{{ images.0.image.url }}' width='100%' height='auto'><a href='{% url 'view_post' problem.id %}'>Read more</a></span>",{maxWidth:150,closeButton:true})
+  marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img class='image' src='{{ images.0.image.url }}'>");
 {% endfor %}
+
+
+// Search bar
+function hitEnter(e){
+  var key = e.which || e.keyCode;
+  if (key == 13) { // 13 is enter
+    var search_text = $('#search')[0].value;
+    $.ajax({
+      url: "{% url 'search' %}",
+      type: "POST",
+      data: {"search_text": search_text},
+      success: function(result) {
+        // sets the earth view at a certain latitude and longitude
+        earth.setView([result.latitude,result.longitude],earth.getZoom());
+        marker_dict[result.id].openPopup();
+      },
+      error: function(xhr, errmsg, err) {
+        console.log(errmsg);
+      }
+    });
+  }
+}
+
+function displayFilteredProblems(tags){
+  markerDictLeng = Object.keys(marker_dict).length;
+  if(markerDictLeng>0){
+    for(i in marker_dict){
+      console.log(marker_dict[i]);
+      marker_dict[i].detach();
+    }
+
+  }
+  var csrftoken = getCookie('csrftoken');
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+  });
+  $.ajax({
+    url:"{% url 'filterProblems' %}",
+    type: "POST",
+    data:{"tags":tags},
+    success: function(result){
+
+      var filteredProblems = result;
+      console.log("length");
+      var leng = Object.keys(filteredProblems).length;
+      for(var i=0;i<leng;i++){
+        problem = filteredProblems[i];
+        var marker = WE.marker([problem.latitude,problem.longitude]).addTo(earth);
+
+        marker_dict[problem.id] = marker;
+       /* marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='http://7-themes.com/data_images/out/15/6819961-scenery-wallpaper.jpg' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});*/
+       marker.bindPopup("<center><h3>{{problem.title}}</h3></center><span 'style='font-size:8px;color:#999'><img src='"+problem.image+"' width='100%' height='auto'></span>",{maxWidth:150,closeButton:true});
+
+      }
+    },
+    error: function(xhr,errmsg,err){
+      console.log(errmsg);
+    }
+  });
+}
 
 function searchFunction(location){
   var url = "https://maps.googleapis.com/maps/api/geocode/json?address="+location+"&key="+API_KEY;
@@ -104,10 +174,22 @@ $('#search')[0].addEventListener("keyup", function(){
   });
 });
 
+
 $('#search-button-submit')[0].addEventListener('click', function(){
   var location = $('#search')[0].value;
   searchFunction(location);
 });
+
+function filterByCategory(){
+  var selectedTags = [];
+  var clickedButtons = $('.clicked');
+  console.log(clickedButtons.length);
+  for(var i=0;i<clickedButtons.length;i++){
+  console.log(clickedButtons[i].innerHTML);
+    selectedTags.push(clickedButtons[i].innerHTML)
+  }
+  displayFilteredProblems(selectedTags);
+}
 
 var colors = ["#337ab7","#5cb85c", "#f0ad4e", "#5bc0de", "#d9534f", "#85144B", "#39CCCC", "#3D9970"];
 
@@ -119,6 +201,7 @@ function changeColor(color, elem){
     elem.className += " "+ color+" clicked";
     elem.style.color = "white";
   }
+  filterByCategory();
 }
 
 $('#pollution-filter')[0].addEventListener('click',function(){changeColor("button-green", this);});

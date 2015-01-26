@@ -33,6 +33,7 @@ class Problem(models.Model):
 	location = models.CharField(max_length=200, blank=False)
 	latitude = models.FloatField(default="40.7127837")
 	longitude = models.FloatField(default="-74.0059413")
+	tags = models.CharField(max_length=100, default='Poverty')
 
 	def __str__(self):
 		return self.title
