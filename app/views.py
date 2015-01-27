@@ -351,7 +351,7 @@ def filterProblems(request):
 		problem = filteredProblems[i]
 		images = ProblemImage.objects.filter(problem=problem)
 		if len(images)==0:
-			url = 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSeorgZD9j5kKDFuH5bBk-jbUp9hJbyNTPG-mUPxD59jZrG0UsuxjITva_k'
+			url = ''#'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSeorgZD9j5kKDFuH5bBk-jbUp9hJbyNTPG-mUPxD59jZrG0UsuxjITva_k'
 		else:
 			url =images[0].image.url
 		results[filteredProblems[i].id] = {"id":filteredProblems[i].id,"title": filteredProblems[i].title, "latitude": filteredProblems[i].latitude, "longitude": filteredProblems[i].longitude,"picture":url}

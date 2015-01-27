@@ -1,0 +1,69 @@
+* { margin: 0; padding: 0; outline:0; }
+
+body {
+    font-size: 12px;
+    line-height: 1.3;
+  
+    color: #000;
+
+    padding-bottom: 10px;
+}
+
+a { color: #0252aa; text-decoration: none; cursor:pointer; }
+a:hover { text-decoration: underline; }
+a img { border: 0; }
+
+input, textarea, select { font-size: 12px; font-family: Arial, Helvetica, sans-serif; }
+textarea { overflow: auto; }
+
+.cl { display: block; height: 0; font-size: 0; line-height: 0; text-indent: -4000px; clear: both; }
+.notext { font-size: 0; line-height: 0; text-indent: -4000px; }
+
+.left, .alignleft { float: left; display: inline; }
+.right, .alignright { float: right; display: inline; }
+
+.shell { width: 920px; margin: 0 auto; }
+
+#header {}
+
+#navigation ul { list-style: none outside none; }
+#navigation ul li { float: left; display: inline; margin-right: 6px; }
+#navigation ul li a,
+#navigation ul li a span { float: left; display: inline;  height: 36px; background: url(images/nav-btn.gif) no-repeat 0 0; padding-left: 20px;  font-size: 15px; color: #000; font-weight: bold; text-transform: uppercase; line-height: 35px; }
+#navigation ul li a span { background-position: right 0; padding: 0 43px 0 0; margin-right: -3px; position: relative;  }
+#navigation ul li a:hover,
+#navigation ul li a:hover span { text-decoration: none; color: #ef3e25; }
+#navigation .ui-sortable-placeholder { background: #fff; visibility: visible !important; height: 36px !important; opacity: 0.5; -moz-opacity: 0.5; filter:alpha(opacity=50); -webkit-border-bottom-right-radius: 5px; -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomright: 5px; -moz-border-radius-bottomleft: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;}
+
+h1#logo { float: left; display: inline; width: 276px; height: 37px; margin-top: 28px; }
+h1#logo a { display: block; height: 37px; background: url(images/logo.png) no-repeat 0 0; }
+
+#main { padding-top: 27px; height: 100%; }
+
+.drag-pointer { position: absolute; top: 0; width: 14px; height:11px; display: block; font-size: 0; line-height: 0; text-indent: -4000px; cursor: move; }
+
+.user-box { position: relative; top: 0; left: 0; float: left; display: inline;  width: 350px; height: 226px; background: url(images/user-box.png) no-repeat 0 0; padding: 0 4px; margin-right: 10px; }
+.user-box .drag-pointer { top: 7px; left: 169px; }
+.user-box .user-picture { float: left; display: inline;  width: 87px; height: 103px; background: url(images/user-picture-cover.gif) no-repeat 0 0; margin: 31px 6px 0 19px; padding: 3px 0 0 3px; }
+.user-box .user-info { float: left; display: inline;  width: 225px; padding-top: 34px; }
+.user-box .username { width: 212px; height: 21px; background: url(images/username-bg.gif) no-repeat 0 0; color: #171200; font-size: 15px; font-weight: bold; text-transform: uppercase; padding-left: 13px; line-height: 20px; }
+.user-box .description { padding: 5px 0 0 12px; }
+.user-box .description h5 { font-size: 11px; text-transform: uppercase; }
+.user-box .social-links { border-top: 1px dashed #000; padding-top: 6px; margin-top: 28px; }
+.user-box .social-links p { float: left; display: inline; font-size: 11px; color: #494949; padding: 4px 6px 0 26px; }
+.user-box .social-links a { float: left; display: inline; width: 23px; height: 23px; background: url(images/ico-social.gif) no-repeat 0 0; margin-right: 4px;  font-size: 0; line-height: 0; text-indent: -4000px; }
+.user-box .social-links .linkedin { background-position: 0 0; }
+.user-box .social-links .skype { background-position: -23px 0; }
+.user-box .social-links .facebook { background-position: -46px 0; }
+.user-box .social-links .twitter { background-position: -69px 0; }
+.user-box .social-links .picasa { background-position: -92px 0; }
+.user-box .social-links .lastfm { background-position: right 0; }
+
+.image-box { position: relative; top: 0; left: 0; float: left; display: inline;  width: 204px; height: 210px; background: url(images/image-box.png) no-repeat 0 0; padding: 0 4px; margin: 0 10px 20px 0; }
+.image-box .drag-pointer { top: 8px; left: 96px; }
+.image-box .photo-cover { position: relative;  width: 170px; height: 110px; background: url(images/photo-cover.gif) no-repeat 0 0; margin: 33px 0 0 15px; padding: 3px 0 0 3px; }
+.image-box .photo-name {  height: 32px; border-top: 1px dashed #000; background: url(images/photo-name-bg.gif) no-repeat center 7px; margin-top: 15px; color: #231f19; text-align: center; padding-top: 8px; }
+
+#footer { color: #ccc; }
+#footer a { color: #ccc; }
+#footer p.right { padding-right: 46px;}
